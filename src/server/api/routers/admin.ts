@@ -1,4 +1,3 @@
-import { Product } from "@prisma/client";
 import { z } from "zod";
 
 import {
@@ -10,15 +9,30 @@ import {
 export const adminRouter = createTRPCRouter({
 
   getAllProducts: publicProcedure.query(({ ctx }) => {
-    return ctx.db.product.findMany();
+    return ctx.db.product.findMany({
+      include: {
+        category: true,
+        color: true,
+        images: true,
+      }
+    });
+  }),
+
+  getAllColors: publicProcedure.query(({ ctx }) => {
+    return ctx.db.color.findMany();
+  }),
+
+  getAllCategories: publicProcedure.query(({ ctx }) => {
+    return ctx.db.category.findMany();
   }),
 
   createColor: publicProcedure
-    .input(z.object({ name: z.string() }))
+    .input(z.object({ name: z.string(), tailwindClass: z.string() }))
     .mutation(({ input, ctx }) => {
       return ctx.db.color.create({
         data: {
-          name: input.name
+          name: input.name,
+          tailwindClass: input.tailwindClass
         }
       })
     }),
@@ -26,7 +40,7 @@ export const adminRouter = createTRPCRouter({
   createCategory: publicProcedure
     .input(z.object({ name: z.string() }))
     .mutation(({ input, ctx }) => {
-      return ctx.db.color.create({
+      return ctx.db.category.create({
         data: {
           name: input.name
         }
@@ -34,14 +48,8 @@ export const adminRouter = createTRPCRouter({
     }),
 
   createProduct: publicProcedure
-    .input(z.object({ name: z.string(), price: z.number(), text: z.string(), discount: z.number().optional(), images: z.string().array().optional(), color: z.string().array(), category: z.string().array() }))
+    .input(z.object({ name: z.string(), price: z.number(), text: z.string(), discount: z.number(), images: z.string().array().optional(), color: z.string().array(), category: z.string().array() }))
     .mutation(async ({ input, ctx }) => {
-
-      let discount = null;
-
-      if (input.discount) {
-        discount = input.discount;
-      }
 
       const connectCategories = input.category.map(catId => ({ id: catId }))
       const connectColors = input.color.map(colId => ({ id: colId }))
@@ -51,7 +59,7 @@ export const adminRouter = createTRPCRouter({
           name: input.name,
           price: input.price,
           text: input.text,
-          discount: discount,
+          discount: input.discount,
           category: {
             connect: connectCategories,
           },
