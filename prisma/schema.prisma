@@ -31,7 +31,7 @@ model Product {
     cathegory Cathegory[]
     color     Color[]
     price     Float
-    discount  Int
+    discount  Int?
     text      String
     images    ProductImage[]
 
