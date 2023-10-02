@@ -23,6 +23,52 @@ model Example {
     @@index([name])
 }
 
+model Product {
+    id        String         @id @default(cuid())
+    name      String
+    createdAt DateTime       @default(now())
+    updatedAt DateTime       @updatedAt
+    cathegory Cathegory[]
+    color     Color[]
+    price     Float
+    discount  Int
+    text      String
+    images    ProductImage[]
+
+    @@index([name])
+}
+
+model ProductImage {
+    id        String   @id @default(cuid())
+    url       String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    Product   Product? @relation(fields: [productId], references: [id])
+    productId String?
+
+    @@index([url])
+}
+
+model Cathegory {
+    id        String    @id @default(cuid())
+    name      String
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+    product   Product[]
+
+    @@index([name])
+}
+
+model Color {
+    id        String    @id @default(cuid())
+    name      String
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+    product   Product[]
+
+    @@index([name])
+}
+
 // Necessary for Next auth
 model Account {
     id                String  @id @default(cuid())
