@@ -28,7 +28,7 @@ model Product {
     name      String
     createdAt DateTime       @default(now())
     updatedAt DateTime       @updatedAt
-    cathegory Cathegory[]
+    category  Category[]
     color     Color[]
     price     Float
     discount  Int?
@@ -49,7 +49,7 @@ model ProductImage {
     @@index([url])
 }
 
-model Cathegory {
+model Category {
     id        String    @id @default(cuid())
     name      String
     createdAt DateTime  @default(now())

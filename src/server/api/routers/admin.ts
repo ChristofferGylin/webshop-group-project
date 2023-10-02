@@ -23,7 +23,7 @@ export const adminRouter = createTRPCRouter({
       })
     }),
 
-  createCathegory: publicProcedure
+  createCategory: publicProcedure
     .input(z.object({ name: z.string() }))
     .mutation(({ input, ctx }) => {
       return ctx.db.color.create({
@@ -52,7 +52,7 @@ export const adminRouter = createTRPCRouter({
           price: input.price,
           text: input.text,
           discount: discount,
-          cathegory: {
+          category: {
             connect: connectCategories,
           },
           color: {
