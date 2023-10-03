@@ -5,18 +5,12 @@ import { useState } from 'react';
 import AddCategory from '~/component/AddCategory';
 import { AiFillCloseCircle } from 'react-icons/ai'
 
-
-
 const Admin = () => {
 
     const [productModal, setProductModal] = useState(false);
     const [colorModal, setColorModal] = useState(false);
     const [categoryModal, setCategoryModal] = useState(false);
     const [modalOpen, setModalOpen] = useState(false);
-
-
-    console.log(modalOpen)
-
 
     const toggleModal = () => {
 
@@ -66,7 +60,6 @@ const Admin = () => {
 
             </div>
             <div className="m-3 bg-slate-200 rounded-lg border overflow-hidden text-slate-700">
-
                 <ProductList />
             </div>
         </>
