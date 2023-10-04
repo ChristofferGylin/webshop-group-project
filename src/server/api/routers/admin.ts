@@ -47,6 +47,16 @@ export const adminRouter = createTRPCRouter({
       })
     }),
 
+    createTags: publicProcedure
+    .input(z.object({ name: z.string() }))
+    .mutation(({ input, ctx }) => {
+      return ctx.db.tags.create({
+        data: {
+          name: input.name
+        }
+      })
+    }),
+
   createProduct: publicProcedure
     .input(z.object({ name: z.string(), price: z.number(), text: z.string(), discount: z.number(), images: z.string().array().optional(), color: z.string().array(), category: z.string().array() }))
     .mutation(async ({ input, ctx }) => {
