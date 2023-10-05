@@ -5,6 +5,7 @@ import { useState } from "react";
 import AddCategory from "~/component/AddCategory";
 import { AiFillCloseCircle } from "react-icons/ai";
 import AddTags from "~/component/AddTags";
+import SignInButton from "~/component/SignInButton";
 
 const Admin = () => {
   const [productModal, setProductModal] = useState(false);
@@ -38,6 +39,7 @@ const Admin = () => {
           </div>
         </div>
       )}
+      <SignInButton />
       <div className="flex justify-center gap-8">
         <button
           className="m-4 rounded-lg border border-slate-300 bg-slate-100 px-4 py-2 text-xl hover:bg-slate-200"
