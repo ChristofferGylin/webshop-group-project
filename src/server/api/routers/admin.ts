@@ -1,5 +1,4 @@
 import { z } from "zod";
-
 import {
   createTRPCRouter,
   protectedProcedure,
@@ -7,14 +6,13 @@ import {
 } from "~/server/api/trpc";
 
 export const adminRouter = createTRPCRouter({
-
   getAllProducts: publicProcedure.query(({ ctx }) => {
     return ctx.db.product.findMany({
       include: {
         category: true,
         color: true,
         images: true,
-      }
+      },
     });
   }),
 
@@ -32,9 +30,9 @@ export const adminRouter = createTRPCRouter({
       return ctx.db.color.create({
         data: {
           name: input.name,
-          tailwindClass: input.tailwindClass
-        }
-      })
+          tailwindClass: input.tailwindClass,
+        },
+      });
     }),
 
   createCategory: publicProcedure
@@ -42,17 +40,26 @@ export const adminRouter = createTRPCRouter({
     .mutation(({ input, ctx }) => {
       return ctx.db.category.create({
         data: {
-          name: input.name
-        }
-      })
+          name: input.name,
+        },
+      });
     }),
 
   createProduct: publicProcedure
-    .input(z.object({ name: z.string(), price: z.number(), text: z.string(), discount: z.number(), images: z.string().array().optional(), color: z.string().array(), category: z.string().array() }))
+    .input(
+      z.object({
+        name: z.string(),
+        price: z.number(),
+        text: z.string(),
+        discount: z.number(),
+        images: z.string().array().optional(),
+        color: z.string().array(),
+        category: z.string().array(),
+      }),
+    )
     .mutation(async ({ input, ctx }) => {
-
-      const connectCategories = input.category.map(catId => ({ id: catId }))
-      const connectColors = input.color.map(colId => ({ id: colId }))
+      const connectCategories = input.category.map((catId) => ({ id: catId }));
+      const connectColors = input.color.map((colId) => ({ id: colId }));
 
       const newProduct = await ctx.db.product.create({
         data: {
@@ -65,29 +72,43 @@ export const adminRouter = createTRPCRouter({
           },
           color: {
             connect: connectColors,
-          }
-        }
-      })
+          },
+        },
+      });
 
       if (input.images) {
-
-        const connectImages = input.images.map(imgId => ({ id: imgId }))
+        const connectImages = input.images.map((imgId) => ({ id: imgId }));
 
         const updatedProduct = await ctx.db.product.update({
           where: {
-            id: newProduct.id
+            id: newProduct.id,
           },
           data: {
             images: {
               connect: connectImages,
-            }
-          }
-        })
+            },
+          },
+        });
 
         return updatedProduct;
-
       }
 
-      return newProduct
+      return newProduct;
+    }),
+
+  createBrand: publicProcedure
+    .input(
+      z.object({
+        name: z.string(),
+        logoId: z.number().int().optional(), // Anpassad för att ta emot en integer
+      }),
+    )
+    .mutation(({ input, ctx }) => {
+      const data = input.logoId
+        ? { name: input.name, logoId: input.logoId }
+        : { name: input.name };
+      return ctx.db.brand.create({
+        data: data,
+      });
     }),
 });

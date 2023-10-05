@@ -114,3 +114,16 @@ model VerificationToken {
 
     @@unique([identifier, token])
 }
+model Brand {
+  id     Int    @id @default(autoincrement())
+  name   String
+  logo   Image? @relation(fields: [logoId], references: [id])
+  logoId Int?   @unique
+}
+
+model Image {
+  id   Int    @id @default(autoincrement())
+  path String
+  brand Brand?
+}
+
