@@ -7,12 +7,13 @@ import { AiFillCloseCircle } from "react-icons/ai";
 import AddTags from "~/component/AddTags";
 import SignInButton from "~/component/SignInButton";
 import { useSession } from "next-auth/react";
+import { getServerAuthSession } from "~/server/auth";
+import { type GetServerSideProps } from "next";
 
 const Admin = () => {
 
   const { data: session } = useSession();
 
-  console.log(session)
   const [productModal, setProductModal] = useState(false);
   const [colorModal, setColorModal] = useState(false);
   const [categoryModal, setCategoryModal] = useState(false);
@@ -90,5 +91,33 @@ const Admin = () => {
     </>
   );
 };
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const session = await getServerAuthSession(ctx);
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    };
+  }
+
+  if (session.user.role !== 'admin') {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: { session },
+  };
+};
+
+
 
 export default Admin;
