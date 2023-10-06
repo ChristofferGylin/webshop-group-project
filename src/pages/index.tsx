@@ -1,6 +1,7 @@
 import { signIn, signOut, useSession } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
+import SignInButton from "~/component/SignInButton";
 
 import { api } from "~/utils/api";
 import { useState } from "react"
@@ -36,6 +37,7 @@ export default function Home() {
               <p className="text-l">NAME</p>
             </Link>
           </div>
+<<<<<<< HEAD
            
             <div id="nav-categories" className="flex justify-center items-center h-12 w-128 max-md:hidden">
               <ul id="categories" className="w-full flex justify-around items-center font-poppins font-medium">
@@ -78,6 +80,13 @@ export default function Home() {
 
           <div className="w-full h-screen grid justify-center items-center bg-slate-300 bg-gradient-to-r from-purple-500 to-pink-500"> 
            
+=======
+          <div className="flex flex-col items-center gap-2">
+            <p className="text-2xl text-white">
+              {hello.data ? hello.data.greeting : "Loading tRPC query..."}
+            </p>
+            <SignInButton />
+>>>>>>> auth
           </div>
       </main>
     </>
