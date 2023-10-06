@@ -6,8 +6,13 @@ import AddCategory from "~/component/AddCategory";
 import { AiFillCloseCircle } from "react-icons/ai";
 import AddTags from "~/component/AddTags";
 import SignInButton from "~/component/SignInButton";
+import { useSession } from "next-auth/react";
 
 const Admin = () => {
+
+  const { data: session } = useSession();
+
+  console.log(session)
   const [productModal, setProductModal] = useState(false);
   const [colorModal, setColorModal] = useState(false);
   const [categoryModal, setCategoryModal] = useState(false);

@@ -44,7 +44,9 @@ export const authOptions: NextAuthOptions = {
       user: {
         ...session.user,
         id: user.id,
+        role: user.role
       },
+
     }),
   },
   adapter: PrismaAdapter(db),
@@ -55,7 +57,8 @@ export const authOptions: NextAuthOptions = {
     }),
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID ?? "",
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? ""
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
+
     })
     /**
      * ...add more providers here.
@@ -67,6 +70,7 @@ export const authOptions: NextAuthOptions = {
      * @see https://next-auth.js.org/providers/github
      */
   ],
+
 };
 
 /**
