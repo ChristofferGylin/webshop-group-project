@@ -30,8 +30,15 @@ export default function Home() {
         <AiOutlineUser size={30} />
       </Link>
     );
+    homeButton = (
+      <Link href={"/examplepage"}>
+        <AiOutlineUser size={30} />
+      </Link>
+    );
   }
 
+  const [menuOpen, setMenuOpen] = useState<boolean>(false);
+  console.log(menuOpen, "menu open");
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
   console.log(menuOpen, "menu open");
   return (
@@ -54,6 +61,19 @@ export default function Home() {
         />
       </Head>
 
+      <main className="flex h-screen min-h-screen w-full flex-col bg-slate-50">
+        <nav className="flex h-16 items-center justify-between">
+          <div className="flex items-center justify-center">
+            <GiHamburgerMenu
+              className="cursor-pointer md:hidden"
+              size={30}
+              onClick={() => setMenuOpen((bol) => !bol)}
+            />
+            <Link
+              className="flex h-12 w-24 items-center justify-center rounded-md"
+              href="/examplepage"
+            >
+              <FcHome size={50} />
       <main className="flex h-screen min-h-screen w-full flex-col bg-slate-50">
         <nav className="flex h-16 items-center justify-between">
           <div className="flex items-center justify-center">
@@ -103,6 +123,17 @@ export default function Home() {
             </div>
           </div>
 
+          {menuOpen ? (
+            <div
+              className="absolute left-0 top-16 z-10 h-screen w-72 border-4 bg-slate-50 md:hidden"
+              onClick={() => setMenuOpen((bol) => !bol)}
+            >
+              <p>menu-div</p>
+            </div>
+          ) : null}
+        </nav>
+
+        <div className="grid h-screen w-full items-center justify-center bg-slate-300 bg-gradient-to-r from-purple-500 to-pink-500"></div>
           {menuOpen ? (
             <div
               className="absolute left-0 top-16 z-10 h-screen w-72 border-4 bg-slate-50 md:hidden"

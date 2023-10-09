@@ -1,5 +1,18 @@
 # Create T3 App
 
+npx db push
+npx prisma studio
+
+1. git checkout development
+2. git pull (ta hem ny kod)
+3. git branch branchname (skapa ny branch )
+4. git checkout mybranch
+   gör ändringar
+5. git add .
+6. git commit -m "message"
+7. git push
+8. gå in på github.com och skapa pullrequest
+
 This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
 
 ## What's next? How do I make an app with this?
