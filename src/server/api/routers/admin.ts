@@ -1,12 +1,20 @@
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import {
   createTRPCRouter,
   protectedProcedure,
-  publicProcedure,
 } from "~/server/api/trpc";
 
 export const adminRouter = createTRPCRouter({
-  getAllProducts: publicProcedure.query(({ ctx }) => {
+
+  getAllProducts: protectedProcedure.query(({ ctx }) => {
+
+    if (ctx.session.user.role !== 'admin') {
+
+      throw new TRPCError({ code: "UNAUTHORIZED" });
+
+    }
+
     return ctx.db.product.findMany({
       include: {
         category: true,
@@ -16,17 +24,38 @@ export const adminRouter = createTRPCRouter({
     });
   }),
 
-  getAllColors: publicProcedure.query(({ ctx }) => {
+  getAllColors: protectedProcedure.query(({ ctx }) => {
+
+    if (ctx.session.user.role !== 'admin') {
+
+      throw new TRPCError({ code: "UNAUTHORIZED" });
+
+    }
+
     return ctx.db.color.findMany();
   }),
 
-  getAllCategories: publicProcedure.query(({ ctx }) => {
+  getAllCategories: protectedProcedure.query(({ ctx }) => {
+
+    if (ctx.session.user.role !== 'admin') {
+
+      throw new TRPCError({ code: "UNAUTHORIZED" });
+
+    }
+
     return ctx.db.category.findMany();
   }),
 
-  createColor: publicProcedure
+  createColor: protectedProcedure
     .input(z.object({ name: z.string(), tailwindClass: z.string() }))
     .mutation(({ input, ctx }) => {
+
+      if (ctx.session.user.role !== 'admin') {
+
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+
+      }
+
       return ctx.db.color.create({
         data: {
           name: input.name,
@@ -35,9 +64,16 @@ export const adminRouter = createTRPCRouter({
       });
     }),
 
-  createCategory: publicProcedure
+  createCategory: protectedProcedure
     .input(z.object({ name: z.string() }))
     .mutation(({ input, ctx }) => {
+
+      if (ctx.session.user.role !== 'admin') {
+
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+
+      }
+
       return ctx.db.category.create({
         data: {
           name: input.name,
@@ -45,9 +81,16 @@ export const adminRouter = createTRPCRouter({
       });
     }),
 
-    createTags: publicProcedure
+  createTags: protectedProcedure
     .input(z.object({ name: z.string() }))
     .mutation(({ input, ctx }) => {
+
+      if (ctx.session.user.role !== 'admin') {
+
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+
+      }
+
       return ctx.db.tags.create({
         data: {
           name: input.name
@@ -55,21 +98,19 @@ export const adminRouter = createTRPCRouter({
       })
     }),
 
-  createProduct: publicProcedure
-    .input(
-      z.object({
-        name: z.string(),
-        price: z.number(),
-        text: z.string(),
-        discount: z.number(),
-        images: z.string().array().optional(),
-        color: z.string().array(),
-        category: z.string().array(),
-      }),
-    )
+
+  createProduct: protectedProcedure
+    .input(z.object({ name: z.string(), price: z.number(), text: z.string(), discount: z.number(), images: z.string().array().optional(), color: z.string().array(), category: z.string().array() }))
     .mutation(async ({ input, ctx }) => {
-      const connectCategories = input.category.map((catId) => ({ id: catId }));
-      const connectColors = input.color.map((colId) => ({ id: colId }));
+
+      if (ctx.session.user.role !== 'admin') {
+
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+
+      }
+
+      const connectCategories = input.category.map(catId => ({ id: catId }))
+      const connectColors = input.color.map(colId => ({ id: colId }))
 
       const newProduct = await ctx.db.product.create({
         data: {

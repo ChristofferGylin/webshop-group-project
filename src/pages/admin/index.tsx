@@ -6,8 +6,13 @@ import AddBrand from "~/component/AddBrand"; // Ny import
 import { useState } from "react";
 import { AiFillCloseCircle } from "react-icons/ai";
 import AddTags from "~/component/AddTags";
+import SignInButton from "~/component/SignInButton";
+import { getServerAuthSession } from "~/server/auth";
+import { type GetServerSideProps } from "next";
+import SignInOutButton from "~/component/SignInOutButton";
 
 const Admin = () => {
+
   const [productModal, setProductModal] = useState(false);
   const [colorModal, setColorModal] = useState(false);
   const [categoryModal, setCategoryModal] = useState(false);
@@ -42,6 +47,7 @@ const Admin = () => {
           </div>
         </div>
       )}
+      <SignInOutButton />
       <div className="flex justify-center gap-8">
         <button
           className="m-4 rounded-lg border border-slate-300 bg-slate-100 px-4 py-2 text-xl hover:bg-slate-200"
@@ -96,5 +102,33 @@ const Admin = () => {
     </>
   );
 };
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const session = await getServerAuthSession(ctx);
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    };
+  }
+
+  if (session.user.role !== 'admin') {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: { session },
+  };
+};
+
+
 
 export default Admin;
