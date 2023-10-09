@@ -1,18 +1,17 @@
-import { type Category } from "@prisma/client";
-import { useState } from "react";
-import { api } from "~/utils/api";
+import { type Category } from '@prisma/client';
+import { useState } from 'react';
+import { api } from '~/utils/api';
 
 const AddCategory = () => {
-  const createCategory = api.admin.createCategory.useMutation();
 
-  const [catData, setCatData] = useState<Pick<Category, "name">>({ name: "" });
+    const createCategory = api.admin.createCategory.useMutation();
 
-  const catSubmit = async () => {
-    await createCategory.mutateAsync({ ...catData });
-  };
-
+    const [catData, setCatData] = useState<
+        Pick<Category, 'name'>
+    >({ name: '' });
 
     const catSubmit = async () => {
+
         await createCategory.mutateAsync({ ...catData })
     }
 
@@ -36,17 +35,8 @@ const AddCategory = () => {
                 </div>
                 <button type='submit' className='border bg-slate-100 hover:bg-slate-200 border-slate-300 rounded-lg px-2 py-1'>Submit</button>
             </form>
-
         </div>
-        <button
-          type="submit"
-          className="rounded-lg border border-slate-300 bg-slate-100 px-2 py-1 hover:bg-slate-200"
-        >
-          Submit
-        </button>
-      </form>
-    </div>
-  );
-};
+    )
+}
 
 export default AddCategory;
