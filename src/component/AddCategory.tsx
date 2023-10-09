@@ -11,7 +11,6 @@ const AddCategory = () => {
     >({ name: '' });
 
     const catSubmit = async () => {
-
         await createCategory.mutateAsync({ ...catData })
     }
 
