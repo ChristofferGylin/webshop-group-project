@@ -78,7 +78,7 @@ export default function Home() {
             <div>
               <AiOutlineSearch size={30} />
             </div>
-            <SignInButton></SignInButton>
+            {homeButton}
             <div>
               <AiOutlineHeart size={30} />
             </div>
