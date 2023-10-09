@@ -1,8 +1,9 @@
 import AddColor from "~/component/AddColor";
 import AddProduct from "~/component/AddProduct";
 import ProductList from "~/component/ProductList";
-import { useState } from "react";
 import AddCategory from "~/component/AddCategory";
+import AddBrand from "~/component/AddBrand"; // Ny import
+import { useState } from "react";
 import { AiFillCloseCircle } from "react-icons/ai";
 import AddTags from "~/component/AddTags";
 import SignInButton from "~/component/SignInButton";
@@ -17,6 +18,8 @@ const Admin = () => {
   const [categoryModal, setCategoryModal] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [tagModal, setTagModal] = useState(false);
+  const [brandModal, setBrandModal] = useState(false);
+
   const toggleModal = () => {
     setProductModal(false);
     setColorModal(false);
@@ -40,6 +43,7 @@ const Admin = () => {
             {colorModal && <AddColor />}
             {categoryModal && <AddCategory />}
             {tagModal && <AddTags />}
+            {brandModal && <AddBrand />}
           </div>
         </div>
       )}
@@ -81,6 +85,15 @@ const Admin = () => {
           }}
         >
           Add tags
+        </button>
+        <button
+          className="m-4 rounded-lg border border-slate-300 bg-slate-100 px-4 py-2 text-xl hover:bg-slate-200"
+          onClick={() => {
+            toggleModal();
+            setBrandModal(true); // Ny rad
+          }}
+        >
+          Add a brand
         </button>
       </div>
       <div className="m-3 overflow-hidden rounded-lg border bg-slate-200 text-slate-700">

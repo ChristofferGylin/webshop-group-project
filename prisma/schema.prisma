@@ -56,6 +56,7 @@ model ProductImage {
   updatedAt DateTime @updatedAt
   Product   Product? @relation(fields: [productId], references: [id])
   productId String?
+  brand     Brand?
 
   @@index([url])
 }
@@ -126,3 +127,10 @@ model VerificationToken {
 
   @@unique([identifier, token])
 }
+model Brand {
+  id     String    @id @default(cuid())
+  name   String
+  logo   ProductImage? @relation(fields: [logoId], references: [id])
+  logoId String?   @unique
+}
+

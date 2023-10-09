@@ -1,6 +1,5 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-
 import {
   createTRPCRouter,
   protectedProcedure,
@@ -21,7 +20,7 @@ export const adminRouter = createTRPCRouter({
         category: true,
         color: true,
         images: true,
-      }
+      },
     });
   }),
 
@@ -60,9 +59,9 @@ export const adminRouter = createTRPCRouter({
       return ctx.db.color.create({
         data: {
           name: input.name,
-          tailwindClass: input.tailwindClass
-        }
-      })
+          tailwindClass: input.tailwindClass,
+        },
+      });
     }),
 
   createCategory: protectedProcedure
@@ -77,9 +76,9 @@ export const adminRouter = createTRPCRouter({
 
       return ctx.db.category.create({
         data: {
-          name: input.name
-        }
-      })
+          name: input.name,
+        },
+      });
     }),
 
   createTags: protectedProcedure
@@ -98,6 +97,7 @@ export const adminRouter = createTRPCRouter({
         }
       })
     }),
+
 
   createProduct: protectedProcedure
     .input(z.object({ name: z.string(), price: z.number(), text: z.string(), discount: z.number(), images: z.string().array().optional(), color: z.string().array(), category: z.string().array() }))
@@ -123,29 +123,43 @@ export const adminRouter = createTRPCRouter({
           },
           color: {
             connect: connectColors,
-          }
-        }
-      })
+          },
+        },
+      });
 
       if (input.images) {
-
-        const connectImages = input.images.map(imgId => ({ id: imgId }))
+        const connectImages = input.images.map((imgId) => ({ id: imgId }));
 
         const updatedProduct = await ctx.db.product.update({
           where: {
-            id: newProduct.id
+            id: newProduct.id,
           },
           data: {
             images: {
               connect: connectImages,
-            }
-          }
-        })
+            },
+          },
+        });
 
         return updatedProduct;
-
       }
 
-      return newProduct
+      return newProduct;
+    }),
+
+  createBrand: publicProcedure
+    .input(
+      z.object({
+        name: z.string(),
+        logoId: z.number().int().optional(), // Anpassad för att ta emot en integer
+      }),
+    )
+    .mutation(({ input, ctx }) => {
+      const data = input.logoId
+        ? { name: input.name, logoId: input.logoId }
+        : { name: input.name };
+      return ctx.db.brand.create({
+        data: data,
+      });
     }),
 });
