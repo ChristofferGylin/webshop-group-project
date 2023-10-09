@@ -1,6 +1,7 @@
 import { signIn, signOut, useSession } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
+import SignInButton from "~/component/SignInButton";
 
 import { api } from "~/utils/api";
 import { useState } from "react"
@@ -13,6 +14,19 @@ import { FcHome } from "react-icons/fc"
 
 
 export default function Home() {
+
+  const { data: session } = useSession();
+  let homeButton;
+
+  if (!session || !session.user) {
+
+    homeButton = <SignInButton />
+
+  } else {
+
+    homeButton = <Link href={"/examplepage"}><AiOutlineUser size={30} /></Link>
+
+  }
 
   const [menuOpen, setMenuOpen] = useState<boolean>(false)
   console.log(menuOpen, "menu open")
@@ -79,14 +93,18 @@ export default function Home() {
           <div className="w-full h-screen grid justify-center items-center bg-slate-300 bg-gradient-to-r from-purple-500 to-pink-500"> 
            
           </div>
+
       </main>
     </>
   );
 }
 
 
-  // const hello = api.example.hello.useQuery({ text: "from tRPC" });
-  // {hello.data ? hello.data.greeting : "Loading tRPC query..."}
+
+// const hello = api.example.hello.useQuery({ text: "from tRPC" });
+// {hello.data ? hello.data.greeting : "Loading tRPC query..."}
+
+
 
 /* function AuthShowcase() {
   const { data: sessionData } = useSession();
