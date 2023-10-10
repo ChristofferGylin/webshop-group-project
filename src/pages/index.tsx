@@ -2,11 +2,9 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
 import SignInButton from "~/component/SignInButton";
-
 import { api } from "~/utils/api";
 import { useState } from "react";
 import Image from "next/image";
-
 import {
   AiOutlineUser,
   AiOutlineSearch,
@@ -16,11 +14,9 @@ import {
 import { BiShoppingBag } from "react-icons/bi";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { FcHome } from "react-icons/fc";
-
 export default function Home() {
   const { data: session } = useSession();
   let homeButton;
-
   if (!session || !session.user) {
     homeButton = <SignInButton />;
   } else {
@@ -30,7 +26,6 @@ export default function Home() {
       </Link>
     );
   }
-
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
   console.log(menuOpen, "menu open");
   return (
@@ -45,7 +40,6 @@ export default function Home() {
           rel="stylesheet"
         />
       </Head>
-
       <main className="flex h-screen min-h-screen w-full flex-col bg-slate-50">
         <nav className="flex h-16 items-center justify-between">
           <div className="flex items-center justify-center">
@@ -62,7 +56,6 @@ export default function Home() {
               <p className="text-l">NAME</p>
             </Link>
           </div>
-
           <div
             id="nav-categories"
             className="flex h-12 w-128 items-center justify-center max-md:hidden"
@@ -81,14 +74,11 @@ export default function Home() {
               <li>Brands</li>
             </ul>
           </div>
-
           <div className="flex w-48 items-center justify-around">
             <div>
               <AiOutlineSearch size={30} />
             </div>
-
-            <SignInButton></SignInButton>
-
+            {homeButton}
             <div>
               <AiOutlineHeart size={30} />
             </div>
@@ -96,7 +86,6 @@ export default function Home() {
               <BiShoppingBag size={30} />
             </div>
           </div>
-
           {menuOpen ? (
             <div
               className="absolute left-0 top-16 z-10 h-screen w-72 border-4 bg-slate-50 md:hidden"
@@ -106,23 +95,19 @@ export default function Home() {
             </div>
           ) : null}
         </nav>
-
         <div className="grid h-screen w-full items-center justify-center bg-slate-300 bg-gradient-to-r from-purple-500 to-pink-500"></div>
       </main>
     </>
   );
 }
-
 // const hello = api.example.hello.useQuery({ text: "from tRPC" });
 // {hello.data ? hello.data.greeting : "Loading tRPC query..."}
-
 /* function AuthShowcase() {
   const { data: sessionData } = useSession();
   const { data: secretMessage } = api.example.getSecretMessage.useQuery(
     undefined, // no input
     { enabled: sessionData?.user !== undefined },
   );
-
   return (
     <div className="flex flex-col items-center justify-center gap-4">
       <p className="text-center text-2xl text-white">

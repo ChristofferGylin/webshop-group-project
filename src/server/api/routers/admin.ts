@@ -147,17 +147,24 @@ export const adminRouter = createTRPCRouter({
       return newProduct;
     }),
 
-  createBrand: publicProcedure
+  createBrand: protectedProcedure
     .input(
       z.object({
         name: z.string(),
-        logoId: z.number().int().optional(), // Anpassad för att ta emot en integer
+        logoId: z.string().optional(),
       }),
     )
     .mutation(({ input, ctx }) => {
+
+      if (ctx.session.user.role !== 'admin') {
+
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+
+      }
+
       const data = input.logoId
         ? { name: input.name, logoId: input.logoId }
-        : { name: input.name };
+        : { name: input.name, logoId: undefined };
       return ctx.db.brand.create({
         data: data,
       });
