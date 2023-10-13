@@ -14,8 +14,12 @@ import {
 import { BiShoppingBag } from "react-icons/bi";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { FcHome } from "react-icons/fc";
+import ProductCollection from "~/component/ProductCollection";
 export default function Home() {
   const { data: session } = useSession();
+
+  const allProducts = api.admin.getAllProducts.useQuery().data;
+
   let homeButton;
   if (!session || !session.user) {
     homeButton = <SignInButton />;
@@ -95,7 +99,9 @@ export default function Home() {
             </div>
           ) : null}
         </nav>
-        <div className="grid h-screen w-full items-center justify-center bg-slate-300 bg-gradient-to-r from-purple-500 to-pink-500"></div>
+        <div className="grid h-screen w-full items-center justify-center bg-slate-50 ">
+          {allProducts && <ProductCollection products={allProducts} />}
+        </div>
       </main>
     </>
   );
