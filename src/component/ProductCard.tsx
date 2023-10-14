@@ -3,6 +3,7 @@ import { useSelectedLayoutSegment } from "next/navigation";
 import { AiOutlineHeart } from "react-icons/ai";
 import { useState } from "react";
 import Link from "next/link";
+import subtractPercent from "~/utils/subtractPercent";
 
 type ProductInput = {
   productName: string;
@@ -20,7 +21,7 @@ const ProductCard = ({
   price,
   image,
   tag,
-  discount,
+  discount = 0,
   dbId,
 }: ProductInput) => {
   let showDiscount = false;
@@ -73,7 +74,16 @@ const ProductCard = ({
           <div className="flex flex-col gap-0.5 font-light text-slate-900">
             <p>{brandName.toUpperCase()}</p>
             <p>{productName}</p>
-            <p>{`$${price}`}</p>
+            {showDiscount ? (
+              <p className="flex gap-4 font-medium">
+                <span className="text-red-500">
+                  ${subtractPercent(price, discount).toFixed(2)}
+                </span>
+                <span className="line-through">${price.toFixed(2)}</span>
+              </p>
+            ) : (
+              <p>${price.toFixed(2)}</p>
+            )}
           </div>
         </Link>
         <button className="h-fit w-fit" onClick={onClickHeart}>
