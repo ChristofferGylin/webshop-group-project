@@ -11,9 +11,8 @@ const ProductCollection = ({ products }: { products: Product[] }) => {
             productName={product.name}
             price={product.price}
             brandName={"Brand Name"}
-            image={"/testimage.png"}
+            image={"/red-t.png"}
             discount={product.discount}
-            tag="Yeah"
             dbId={product.id}
           />
         );

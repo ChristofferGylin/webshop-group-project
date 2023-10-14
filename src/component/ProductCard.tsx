@@ -48,8 +48,8 @@ const ProductCard = ({
         <div className="relative flex w-full justify-center bg-gray-500">
           {image ? (
             <Image
-              width={311}
-              height={389}
+              width={320}
+              height={400}
               src={image}
               alt={`${productName} Product Image`}
               className="w-full"
