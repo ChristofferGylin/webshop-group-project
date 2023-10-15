@@ -22,6 +22,11 @@ const ImageUpload = () => {
       method: "POST",
       body,
     });
+    if (!response.ok) {
+      // do stuff
+    } else {
+      // do other stuff
+    }
   };
 
   return (

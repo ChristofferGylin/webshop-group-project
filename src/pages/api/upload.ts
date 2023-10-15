@@ -27,12 +27,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const session = await getServerSession(req, res, authOptions);
 
     if (!session) {
-      res.status(401).send("You must be logged in to access this resource.");
+      res.status(401).end();
       return;
     }
 
     if (session.user.role !== "admin") {
-      res.status(403).send("You are not allowed to access this resource.");
+      res.status(403).end();
       return;
     }
 
@@ -50,12 +50,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
         if (files.file && files.file[0]) {
           if (files.file[0].size > 20971520) {
-            res.status(413).send("File size may not exceed 20MB");
+            res.status(413).end();
             return;
           }
 
-          console.log("fields:", fields);
-          console.log("files.file[0]:", files.file[0]);
           switch (files.file[0].mimetype) {
             case "image/jpg":
             case "image/jpeg":
@@ -70,9 +68,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               fileExtension = ".webp";
 
             default:
-              res
-                .status(415)
-                .send("Only jpeg, png and webp file formats are allowed");
+              res.status(415).end();
               return;
           }
 
@@ -81,7 +77,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         }
       });
     } else {
-      res.status(405).send("Method not allowed");
+      res.status(405).end();
     }
   } catch (e) {
     let message;
