@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { useState, ChangeEvent } from "react";
+import { useState, useEffect, ChangeEvent } from "react";
 
 type ImageProps = {
   imgType: string;
@@ -8,7 +8,7 @@ type ImageProps = {
 
 const ImageUpload = ({
   imgType = "products",
-  parentId = "clnndeni20004nvtgd7hnar51",
+  parentId = "clnndf6ag0005nvtgv2xnuxsk",
 }: ImageProps) => {
   const [image, setImage] = useState<File | null>(null);
   const [createObjectURL, setCreateObjectURL] = useState<string | null>(null);
@@ -61,6 +61,12 @@ const ImageUpload = ({
       }
     }
   };
+
+  useEffect(() => {
+    if (!image) return;
+
+    uploadToServer();
+  }, [image]);
 
   return (
     <div>
