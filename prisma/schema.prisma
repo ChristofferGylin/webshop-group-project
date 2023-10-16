@@ -48,6 +48,8 @@ model Product {
   stock     Int            @default(50)
   ordered   Int            @default(0)
   tagline   String?
+  Brand     Brand?         @relation(fields: [brandId], references: [id])
+  brandId   String?
 
   @@index([name])
 }
@@ -133,9 +135,10 @@ model VerificationToken {
 }
 
 model Brand {
-  id     String        @id @default(cuid())
-  name   String
-  logo   ProductImage? @relation(fields: [logoId], references: [id])
-  logoId String?       @unique
-  text   String?
+  id       String        @id @default(cuid())
+  name     String
+  logo     ProductImage? @relation(fields: [logoId], references: [id])
+  logoId   String?       @unique
+  text     String?
+  products Product[]
 }

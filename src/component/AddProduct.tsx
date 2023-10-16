@@ -1,26 +1,37 @@
 import { api } from "~/utils/api";
-import { useState } from "react";
-import { type Product } from "@prisma/client";
+import { useEffect, useState } from "react";
+import { Category, Color, Tags, type Product, Brand } from "@prisma/client";
+import MultiChoice from "./MultiChoice";
 
 const AddProduct = () => {
   const createProduct = api.admin.createProduct.useMutation();
-  const allColors = api.admin.getAllColors.useQuery().data;
-  const allCategories = api.admin.getAllCategories.useQuery().data;
+  const allColors: Color[] = api.admin.getAllColors.useQuery().data;
+  const allCategories: Category[] = api.admin.getAllCategories.useQuery().data;
+  const allBrands: Brand[] = api.admin.getAllBrands.useQuery().data;
+  const allTags: Tags[] = api.admin.getAllTags.useQuery().data;
 
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [selectedCats, setSelectedCats] = useState<string[]>([]);
+  const [selectedBrand, setSelectedBrand] = useState<string>("");
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (!allBrands || !allBrands[0]) return;
+
+    setSelectedBrand(allBrands[0].id);
+  }, [allBrands]);
 
   const [prodData, setProdData] = useState<
     Pick<Product, "name" | "price" | "text" | "discount">
   >({ name: "", price: 0, discount: 0, text: "" });
 
   const prodSubmit = async () => {
-    console.log("selectedCats:", selectedCats);
-
     await createProduct.mutateAsync({
       ...prodData,
       color: [...selectedColors],
       category: [...selectedCats],
+      tags: [...selectedTags],
+      brand: selectedBrand,
     });
   };
 
@@ -106,67 +117,32 @@ const AddProduct = () => {
             />
           </div>
         </div>
-
-        <div className="flex gap-4 border-b py-4">
-          <label className="w-24">Color:</label>
-          <div className="flex gap-6">
-            {allColors?.map((color, index) => {
+        <MultiChoice
+          input={allColors}
+          name={"color"}
+          callback={setSelectedColors}
+        />
+        <MultiChoice
+          input={allCategories}
+          name={"category"}
+          callback={setSelectedCats}
+        />
+        <select
+          onChange={(e) => {
+            setSelectedBrand(e.target.value);
+          }}
+        >
+          {allBrands &&
+            allBrands.map((brand, index) => {
               return (
-                <div key={`color#${index}`} className="flex flex-col gap-1">
-                  <label htmlFor={`colorName#${index}`}>{color.name}</label>
-                  <input
-                    type="checkbox"
-                    name={`colorName#${index}`}
-                    id={`colorId#${index}`}
-                    className="rounded-lg border border-slate-300"
-                    onChange={(e) => {
-                      setSelectedColors((oldData) => {
-                        if (e.target.checked) {
-                          return [...oldData, color.id];
-                        }
-
-                        return oldData.filter((selectedCol) => {
-                          return selectedCol !== color.id;
-                        });
-                      });
-                    }}
-                  />
-                </div>
+                <option key={`brandSelect#${index}`} value={brand.id}>
+                  {brand.name}
+                </option>
               );
             })}
-          </div>
-        </div>
-        <div className="w-1/7 flex gap-4 py-4">
-          <label className="w-24">Category:</label>
-          <div className="flex gap-6">
-            {allCategories?.map((category, index) => {
-              return (
-                <div key={`category#${index}`} className="flex flex-col gap-1">
-                  <label htmlFor={`categoryName#${index}`}>
-                    {category.name}
-                  </label>
-                  <input
-                    type="checkbox"
-                    name={`categoryName#${index}`}
-                    id={`categoryId#${index}`}
-                    className="rounded-lg border border-slate-300"
-                    onChange={(e) => {
-                      setSelectedCats((oldData) => {
-                        if (e.target.checked) {
-                          return [...oldData, category.id];
-                        }
+        </select>
 
-                        return oldData.filter((selectedCat) => {
-                          return selectedCat !== category.id;
-                        });
-                      });
-                    }}
-                  />
-                </div>
-              );
-            })}
-          </div>
-        </div>
+        <MultiChoice input={allTags} name={"tags"} callback={setSelectedTags} />
 
         <div className="w-1/7 flex gap-4">
           <button
