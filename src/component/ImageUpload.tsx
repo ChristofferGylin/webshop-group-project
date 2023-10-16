@@ -1,31 +1,64 @@
 import Image from "next/image";
 import { useState } from "react";
 
-const ImageUpload = () => {
+type ImageProps = {
+  imgType: string;
+  parentId: string;
+};
+
+const ImageUpload = ({
+  imgType = "products",
+  parentId = "clnndeni20004nvtgd7hnar51",
+}: ImageProps) => {
   const [image, setImage] = useState(null);
   const [createObjectURL, setCreateObjectURL] = useState(null);
 
   const uploadToClient = (event) => {
     if (event.target.files && event.target.files[0]) {
-      const i = event.target.files[0];
+      const uploadedImage = event.target.files[0];
+      console.log("image:", uploadedImage);
 
-      setImage(i);
-      setCreateObjectURL(URL.createObjectURL(i));
+      if (uploadedImage.size > 20971520) {
+        // too big
+        return;
+      }
+
+      let isTypeOk = false;
+
+      switch (uploadedImage.type) {
+        case "image/jpg":
+        case "image/jpeg":
+        case "image/png":
+        case "image/webp":
+          isTypeOk = true;
+          break;
+      }
+
+      if (!isTypeOk) {
+        // wrong file type
+        return;
+      }
+
+      setImage(uploadedImage);
+      setCreateObjectURL(URL.createObjectURL(uploadedImage));
     }
   };
 
   const uploadToServer = async (event) => {
     const body = new FormData();
-    body.append("file", image);
-    body.append("pathName", "holabaloo");
-    const response = await fetch("/api/upload", {
-      method: "POST",
-      body,
-    });
-    if (!response.ok) {
-      // do stuff
-    } else {
-      // do other stuff
+    if (image) {
+      body.append("file", image);
+      body.append("imgType", imgType);
+      body.append("parentId", parentId);
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body,
+      });
+      if (!response.ok) {
+        // do stuff
+      } else {
+        // do other stuff
+      }
     }
   };
 
