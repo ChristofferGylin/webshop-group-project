@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { useState, useEffect, ChangeEvent } from "react";
+import { useState, useEffect, useRef, ChangeEvent } from "react";
 
 type ImageProps = {
   imgType: string;
@@ -7,19 +7,20 @@ type ImageProps = {
 };
 
 const ImageUpload = ({
-  imgType = "products",
-  parentId = "clnndf6ag0005nvtgv2xnuxsk",
+  imgType = "brands",
+  parentId = "clnt0onv70001nva4pccpczhu",
 }: ImageProps) => {
   const [image, setImage] = useState<File | null>(null);
   const [createObjectURL, setCreateObjectURL] = useState<string | null>(null);
+  const [userMessage, setUserMessage] = useState("");
+  const fileInput = useRef<HTMLInputElement | null>(null);
 
   const uploadToClient = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
       const uploadedImage = event.target.files[0];
-      console.log("image:", uploadedImage);
 
       if (uploadedImage.size > 20971520) {
-        // too big
+        setUserMessage("File too large, maximum file size is 20MB.");
         return;
       }
 
@@ -35,7 +36,7 @@ const ImageUpload = ({
       }
 
       if (!isTypeOk) {
-        // wrong file type
+        setUserMessage("Wrong file format. Only JPG, PNG and WEBP is allowed.");
         return;
       }
 
@@ -62,6 +63,12 @@ const ImageUpload = ({
     }
   };
 
+  const handleClick = () => {
+    if (fileInput && fileInput.current) {
+      fileInput.current.click();
+    }
+  };
+
   useEffect(() => {
     if (!image) return;
 
@@ -79,11 +86,18 @@ const ImageUpload = ({
             alt="image preview"
           />
         )}
-        <h4>Select Image</h4>
-        <input type="file" name="imgUpload" onChange={uploadToClient} />
-        <button type="submit" onClick={uploadToServer}>
+
+        <input
+          type="file"
+          name="imgUpload"
+          onChange={uploadToClient}
+          ref={fileInput}
+          className="hidden"
+        />
+        <button type="submit" onClick={handleClick}>
           Send to server
         </button>
+        <p>{userMessage}</p>
       </div>
     </div>
   );

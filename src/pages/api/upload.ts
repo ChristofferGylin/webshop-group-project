@@ -81,14 +81,35 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             let dbData;
 
             if (fields.imgType[0] === "products") {
+              const existingImages = await db.productImage.findMany({
+                where: { productId: fields.parentId[0] },
+              });
+
               dbData = {
                 id: dbId,
                 url: path,
+                sortOrder: existingImages.length,
                 Product: {
                   connect: { id: fields.parentId[0] },
                 },
               };
             } else {
+              const existingImages = await db.productImage.findMany({
+                where: { brand: { id: fields.parentId[0] } },
+              });
+
+              if (existingImages.length > 0) {
+                if (existingImages[0]) {
+                  fs.unlinkSync(existingImages[0]?.url);
+                  console.log("id to delete: ", existingImages[0].id);
+                  await db.productImage.delete({
+                    where: {
+                      id: existingImages[0].id,
+                    },
+                  });
+                }
+              }
+
               dbData = {
                 id: dbId,
                 url: path,

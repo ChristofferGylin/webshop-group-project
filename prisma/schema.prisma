@@ -137,5 +137,5 @@ model Brand {
   name   String
   logo   ProductImage? @relation(fields: [logoId], references: [id])
   logoId String?       @unique
-  text   String
+  text   String?
 }
