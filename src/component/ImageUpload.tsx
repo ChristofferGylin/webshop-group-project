@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { useState } from "react";
+import { useState, ChangeEvent } from "react";
 
 type ImageProps = {
   imgType: string;
@@ -10,10 +10,10 @@ const ImageUpload = ({
   imgType = "products",
   parentId = "clnndeni20004nvtgd7hnar51",
 }: ImageProps) => {
-  const [image, setImage] = useState(null);
-  const [createObjectURL, setCreateObjectURL] = useState(null);
+  const [image, setImage] = useState<File | null>(null);
+  const [createObjectURL, setCreateObjectURL] = useState<string | null>(null);
 
-  const uploadToClient = (event) => {
+  const uploadToClient = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
       const uploadedImage = event.target.files[0];
       console.log("image:", uploadedImage);
@@ -44,7 +44,7 @@ const ImageUpload = ({
     }
   };
 
-  const uploadToServer = async (event) => {
+  const uploadToServer = async () => {
     const body = new FormData();
     if (image) {
       body.append("file", image);
