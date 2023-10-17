@@ -9,7 +9,7 @@ type MultiProps = {
 
 const MultiChoice = ({ name, callback, input, selected }: MultiProps) => {
   return (
-    <div className="flex gap-4 border-b py-4">
+    <div className="flex gap-4 border-b py-2">
       <label className="w-24 capitalize">{name}:</label>
       <div className="flex gap-6">
         {input?.map((item, index) => {

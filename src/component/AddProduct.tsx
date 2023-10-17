@@ -100,12 +100,12 @@ const AddProduct = ({ id }: AddProductType) => {
   };
 
   return (
-    <div className="flex max-h-full w-full flex-col gap-4 overflow-auto border-b bg-slate-300 px-2 py-4">
+    <div className="flex max-h-full w-full flex-col gap-2 overflow-auto border-b bg-slate-300 p-2">
       <h1 className="text-2xl">
         {update ? "Update product" : "Add a product"}
       </h1>
       {update && id && (
-        <div className=" border-b pb-4">
+        <div className=" border-b py-2">
           <h2 className="pb-2 text-xl">Images</h2>
           <div className="flex h-28 w-full gap-2">
             <ImageUpload
@@ -113,30 +113,32 @@ const AddProduct = ({ id }: AddProductType) => {
               parentId={id}
               callback={handleImageUpload}
             />
-            <ul className="flex h-full w-full items-center gap-2 rounded-xl border border-slate-500 bg-slate-200 p-2 shadow-inner">
-              {images.map((img, index) => {
-                return (
-                  <li
-                    key={`ProductImage#${index}`}
-                    className="relative flex aspect-square h-full items-center justify-center shadow-lg"
-                  >
-                    <Image
-                      src={img.url}
-                      fill={true}
-                      alt="Product Image"
-                      className="object-cover"
-                    />
-                  </li>
-                );
-              })}
-            </ul>
+            <div className="h-full w-full overflow-hidden rounded-xl border border-slate-500 bg-slate-100 shadow-inner">
+              <ul className="flex h-full w-full items-center gap-2 overflow-auto p-2">
+                {images.map((img, index) => {
+                  return (
+                    <li
+                      key={`ProductImage#${index}`}
+                      className="relative flex aspect-square h-full items-center justify-center shadow-lg"
+                    >
+                      <Image
+                        src={img.url}
+                        fill={true}
+                        alt="Product Image"
+                        className="object-cover"
+                      />
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
           </div>
         </div>
       )}
 
       <form onSubmit={prodSubmit} className="w-full">
-        <div className="flex flex-wrap justify-center gap-12 border-b pb-4">
-          <div className="flex flex-col gap-4">
+        <div className="flex flex-wrap justify-center gap-4 border-b py-2">
+          <div className="flex flex-col gap-2">
             <label htmlFor="name" className="w-14">
               Name:
             </label>
@@ -144,14 +146,14 @@ const AddProduct = ({ id }: AddProductType) => {
               type="text"
               name="name"
               id="name"
-              className="rounded-lg border border-slate-300"
+              className="rounded-lg border border-slate-300 bg-slate-100 p-1 shadow-inner"
               value={name}
               onChange={(e) => {
                 setName(e.target.value);
               }}
             />
           </div>
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-2">
             <label htmlFor="price" className="w-14">
               Price:
             </label>
@@ -159,14 +161,14 @@ const AddProduct = ({ id }: AddProductType) => {
               type="number"
               name="price"
               id="price"
-              className="rounded-lg border border-slate-300"
+              className="rounded-lg border border-slate-300 bg-slate-100 p-1 shadow-inner"
               value={price}
               onChange={(e) => {
                 setPrice(e.target.value);
               }}
             />
           </div>
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-2">
             <label htmlFor="discount" className="w-14">
               Discount:
             </label>
@@ -174,14 +176,14 @@ const AddProduct = ({ id }: AddProductType) => {
               type="number"
               name="discount"
               id="discount"
-              className="rounded-lg border border-slate-300"
+              className="rounded-lg border border-slate-300 bg-slate-100 p-1 shadow-inner"
               value={discount}
               onChange={(e) => {
                 setDiscount(e.target.value);
               }}
             />
           </div>
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-2">
             <label htmlFor="name" className="w-14">
               Text:
             </label>
@@ -189,7 +191,7 @@ const AddProduct = ({ id }: AddProductType) => {
               type="text"
               name="text"
               id="text"
-              className="rounded-lg border border-slate-300"
+              className="rounded-lg border border-slate-300 bg-slate-100 p-1 shadow-inner"
               value={text}
               onChange={(e) => {
                 setText(e.target.value);
@@ -214,21 +216,27 @@ const AddProduct = ({ id }: AddProductType) => {
             selected={dbProduct?.category}
           />
         )}
-        <select
-          value={dbProduct?.brandId || selectedBrand}
-          onChange={(e) => {
-            setSelectedBrand(e.target.value);
-          }}
-        >
-          {allBrands &&
-            allBrands.map((brand, index) => {
-              return (
-                <option key={`brandSelect#${index}`} value={brand.id}>
-                  {brand.name}
-                </option>
-              );
-            })}
-        </select>
+        <div className="flex gap-4 border-b py-2">
+          <label htmlFor="brand" className="w-14">
+            Brand:
+          </label>
+          <select
+            className="rounded-lg border border-slate-300 bg-slate-100 p-1 shadow-inner"
+            value={dbProduct?.brandId || selectedBrand}
+            onChange={(e) => {
+              setSelectedBrand(e.target.value);
+            }}
+          >
+            {allBrands &&
+              allBrands.map((brand, index) => {
+                return (
+                  <option key={`brandSelect#${index}`} value={brand.id}>
+                    {brand.name}
+                  </option>
+                );
+              })}
+          </select>
+        </div>
 
         {allTags && (
           <MultiChoice
@@ -239,7 +247,7 @@ const AddProduct = ({ id }: AddProductType) => {
           />
         )}
 
-        <div className="w-1/7 flex gap-4">
+        <div className="w-1/7 flex py-2">
           {update ? (
             <button
               type="submit"

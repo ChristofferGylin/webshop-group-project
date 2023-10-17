@@ -87,7 +87,7 @@ const ImageUpload = ({ imgType, parentId, callback }: ImageProps) => {
       <button
         type="submit"
         onClick={handleClick}
-        className="group flex h-full w-full items-center justify-center rounded-xl border border-slate-500 bg-slate-200 hover:bg-slate-100/70"
+        className="group flex h-full w-full items-center justify-center rounded-xl border border-slate-300 bg-slate-100 hover:bg-slate-200"
       >
         <AiOutlineCloudUpload className="text-3xl text-slate-500 group-hover:text-slate-700" />
       </button>
