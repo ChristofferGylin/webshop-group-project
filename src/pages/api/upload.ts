@@ -14,7 +14,7 @@ export const config = {
 
 const saveFile = async (file: File, path: string) => {
   const data = fs.readFileSync(file.filepath);
-  fs.writeFileSync(path, data);
+  fs.writeFileSync(`./public${path}`, data);
   await fs.unlinkSync(file.filepath);
   return;
 };
@@ -69,7 +69,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               return;
           }
           const dbId = uuidv4();
-          const path = `./public/images/${fields.imgType}/${dbId}${fileExtension}`;
+          const path = `/images/${fields.imgType}/${dbId}${fileExtension}`;
+          let newImg;
 
           if (
             fields &&
@@ -119,13 +120,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               };
             }
 
-            await db.productImage.create({
+            newImg = await db.productImage.create({
               data: dbData,
             });
           }
-
           saveFile(files.file[0], path);
-          res.json({ id: dbId });
+          res.json(newImg);
         }
       });
     } else {

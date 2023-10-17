@@ -1,15 +1,14 @@
-import Image from "next/image";
+import { ProductImage } from "@prisma/client";
 import { useState, useEffect, useRef, ChangeEvent } from "react";
+import { AiOutlineCloudUpload } from "react-icons/ai";
 
 type ImageProps = {
-  imgType: string;
+  imgType: "products" | "brands";
   parentId: string;
+  callback: (newImg: ProductImage) => void;
 };
 
-const ImageUpload = ({
-  imgType = "brands",
-  parentId = "clnt0onv70001nva4pccpczhu",
-}: ImageProps) => {
+const ImageUpload = ({ imgType, parentId, callback }: ImageProps) => {
   const [image, setImage] = useState<File | null>(null);
   const [createObjectURL, setCreateObjectURL] = useState<string | null>(null);
   const [userMessage, setUserMessage] = useState("");
@@ -55,8 +54,9 @@ const ImageUpload = ({
         method: "POST",
         body,
       });
-      if (!response.ok) {
-        // do stuff
+      if (response.ok) {
+        const data = await response.json();
+        callback(data);
       } else {
         // do other stuff
       }
@@ -76,29 +76,22 @@ const ImageUpload = ({
   }, [image]);
 
   return (
-    <div>
-      <div>
-        {createObjectURL && (
-          <Image
-            src={createObjectURL}
-            height={400}
-            width={400}
-            alt="image preview"
-          />
-        )}
-
-        <input
-          type="file"
-          name="imgUpload"
-          onChange={uploadToClient}
-          ref={fileInput}
-          className="hidden"
-        />
-        <button type="submit" onClick={handleClick}>
-          Send to server
-        </button>
-        <p>{userMessage}</p>
-      </div>
+    <div className="aspect-square h-full">
+      <input
+        type="file"
+        name="imgUpload"
+        onChange={uploadToClient}
+        ref={fileInput}
+        className="hidden"
+      />
+      <button
+        type="submit"
+        onClick={handleClick}
+        className="group flex h-full w-full items-center justify-center rounded-xl border border-slate-500 bg-slate-200 hover:bg-slate-100/70"
+      >
+        <AiOutlineCloudUpload className="text-3xl text-slate-500 group-hover:text-slate-700" />
+      </button>
+      <p>{userMessage}</p>
     </div>
   );
 };

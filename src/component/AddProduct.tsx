@@ -1,7 +1,16 @@
 import { api } from "~/utils/api";
 import { useEffect, useState } from "react";
-import { Category, Color, Tags, type Product, Brand } from "@prisma/client";
+import {
+  Category,
+  Color,
+  Tags,
+  type Product,
+  Brand,
+  ProductImage,
+} from "@prisma/client";
 import MultiChoice from "./MultiChoice";
+import ImageUpload from "./ImageUpload";
+import Image from "next/image";
 
 type AddProductType = {
   id?: string;
@@ -27,6 +36,7 @@ const AddProduct = ({ id }: AddProductType) => {
   const [discount, setDiscount] = useState("0");
   const [text, setText] = useState("");
   const [tagline, setTagline] = useState("");
+  const [images, setImages] = useState<ProductImage[]>([]);
 
   useEffect(() => {
     if (!allBrands || !allBrands[0]) return;
@@ -37,7 +47,7 @@ const AddProduct = ({ id }: AddProductType) => {
   let dbProduct:
     | (Product & { color: Color[] } & { category: Category[] } & {
         tags: Tags[];
-      })
+      } & { images: ProductImage[] })
     | null
     | undefined;
 
@@ -59,6 +69,7 @@ const AddProduct = ({ id }: AddProductType) => {
     setSelectedCats(cats);
     const tags = dbProduct.tags.map((tag) => tag.id);
     setSelectedTags(tags);
+    setImages(dbProduct.images);
   }, [dbProduct]);
 
   const prodSubmit = async () => {
@@ -81,13 +92,50 @@ const AddProduct = ({ id }: AddProductType) => {
     await createProduct.mutateAsync(data);
   };
 
+  const handleImageUpload = (newImg: ProductImage) => {
+    console.log(newImg);
+    setImages((oldData) => {
+      return [...oldData, newImg];
+    });
+  };
+
   return (
-    <div className="flex h-full w-full flex-col gap-4 border-b bg-slate-300 px-2 py-4">
-      <div className="text-2xl">
+    <div className="flex max-h-full w-full flex-col gap-4 overflow-auto border-b bg-slate-300 px-2 py-4">
+      <h1 className="text-2xl">
         {update ? "Update product" : "Add a product"}
-      </div>
+      </h1>
+      {update && id && (
+        <div className=" border-b pb-4">
+          <h2 className="pb-2 text-xl">Images</h2>
+          <div className="flex h-28 w-full gap-2">
+            <ImageUpload
+              imgType="products"
+              parentId={id}
+              callback={handleImageUpload}
+            />
+            <ul className="flex h-full w-full items-center gap-2 rounded-xl border border-slate-500 bg-slate-200 p-2 shadow-inner">
+              {images.map((img, index) => {
+                return (
+                  <li
+                    key={`ProductImage#${index}`}
+                    className="relative flex aspect-square h-full items-center justify-center shadow-lg"
+                  >
+                    <Image
+                      src={img.url}
+                      fill={true}
+                      alt="Product Image"
+                      className="object-cover"
+                    />
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        </div>
+      )}
+
       <form onSubmit={prodSubmit} className="w-full">
-        <div className="flex flex-wrap justify-center gap-12 border-b py-4">
+        <div className="flex flex-wrap justify-center gap-12 border-b pb-4">
           <div className="flex flex-col gap-4">
             <label htmlFor="name" className="w-14">
               Name:
