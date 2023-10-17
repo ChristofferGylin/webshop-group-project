@@ -13,9 +13,32 @@ export const adminRouter = createTRPCRouter({
         category: true,
         color: true,
         images: true,
+        Brand: true,
+        tags: true,
       },
     });
   }),
+
+  getProductById: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(({ input, ctx }) => {
+      if (ctx.session.user.role !== "admin") {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+      }
+
+      return ctx.db.product.findUnique({
+        where: {
+          id: input.id,
+        },
+        include: {
+          category: true,
+          color: true,
+          images: true,
+          Brand: true,
+          tags: true,
+        },
+      });
+    }),
 
   getAllColors: protectedProcedure.query(({ ctx }) => {
     if (ctx.session.user.role !== "admin") {
@@ -115,17 +138,6 @@ export const adminRouter = createTRPCRouter({
       const connectColors = input.color.map((colId) => ({ id: colId }));
 
       let connectTags: { id: string }[] = [];
-      console.log("------------------------------------------------");
-      console.log("------------------------------------------------");
-      console.log("------------------------------------------------");
-      console.log("------------------------------------------------");
-      console.log("------------------------------------------------");
-      console.log("Brand:", input.brand);
-      console.log("------------------------------------------------");
-      console.log("------------------------------------------------");
-      console.log("------------------------------------------------");
-      console.log("------------------------------------------------");
-      console.log("------------------------------------------------");
 
       if (input.tags) {
         connectTags = input.tags.map((tagId) => ({ id: tagId }));
@@ -168,6 +180,78 @@ export const adminRouter = createTRPCRouter({
       }
 
       return newProduct;
+    }),
+
+  updateProduct: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        data: z.object({
+          name: z.string(),
+          price: z.number(),
+          text: z.string(),
+          discount: z.number(),
+          images: z.string().array().optional(),
+          color: z.string().array(),
+          category: z.string().array(),
+          brand: z.string(),
+          tags: z.string().array().optional(),
+        }),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      if (ctx.session.user.role !== "admin") {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+      }
+
+      const connectCategories = input.data.category.map((catId) => ({
+        id: catId,
+      }));
+      const connectColors = input.data.color.map((colId) => ({ id: colId }));
+
+      let connectTags: { id: string }[] = [];
+
+      if (input.data.tags) {
+        connectTags = input.data.tags.map((tagId) => ({ id: tagId }));
+      }
+
+      await ctx.db.product.update({
+        where: { id: input.id },
+        data: {
+          color: {
+            set: [],
+          },
+          category: {
+            set: [],
+          },
+          tags: {
+            set: [],
+          },
+        },
+      });
+
+      return ctx.db.product.update({
+        where: {
+          id: input.id,
+        },
+
+        data: {
+          name: input.data.name,
+          price: input.data.price,
+          text: input.data.text,
+          discount: input.data.discount,
+          brandId: input.data.brand,
+          category: {
+            connect: connectCategories,
+          },
+          color: {
+            connect: connectColors,
+          },
+          tags: {
+            connect: connectTags,
+          },
+        },
+      });
     }),
 
   createBrand: protectedProcedure
