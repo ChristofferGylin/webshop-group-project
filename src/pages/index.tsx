@@ -15,6 +15,10 @@ import { BiShoppingBag } from "react-icons/bi";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { FcHome } from "react-icons/fc";
 import ProductCollection from "~/component/ProductCollection";
+
+import Navbar from "~/component/navbar/Navbar";
+import Hamburger from "~/component/navbar/Hamburger";
+
 export default function Home() {
   const { data: session } = useSession();
 
@@ -25,13 +29,12 @@ export default function Home() {
     homeButton = <SignInButton />;
   } else {
     homeButton = (
-      <Link href={"/examplepage"}>
+      <Link href={"/"}>
         <AiOutlineUser size={30} />
       </Link>
     );
   }
-  const [menuOpen, setMenuOpen] = useState<boolean>(false);
-  console.log(menuOpen, "menu open");
+
   return (
     <>
       <Head>
@@ -45,60 +48,8 @@ export default function Home() {
         />
       </Head>
       <main className="flex h-screen min-h-screen w-full flex-col bg-slate-50">
-        <nav className="flex h-16 items-center justify-between">
-          <div className="flex items-center justify-center">
-            <GiHamburgerMenu
-              className="cursor-pointer md:hidden"
-              size={30}
-              onClick={() => setMenuOpen((bol) => !bol)}
-            />
-            <Link
-              className="flex h-12 w-24 items-center justify-center rounded-md"
-              href="/examplepage"
-            >
-              <FcHome size={50} />
-              <p className="text-l">NAME</p>
-            </Link>
-          </div>
-          <div
-            id="nav-categories"
-            className="flex h-12 w-128 items-center justify-center max-md:hidden"
-          >
-            <ul
-              id="categories"
-              className="flex w-full items-center justify-around font-poppins font-medium"
-            >
-              <li className="">
-                <Link href="/examplepage">Example</Link>
-              </li>
-              <li>Shoes</li>
-              <li>Sportsware</li>
-              <li>Hoodies</li>
-              <li>Bottoms</li>
-              <li>Brands</li>
-            </ul>
-          </div>
-          <div className="flex w-48 items-center justify-around">
-            <div>
-              <AiOutlineSearch size={30} />
-            </div>
-            {homeButton}
-            <div>
-              <AiOutlineHeart size={30} />
-            </div>
-            <div>
-              <BiShoppingBag size={30} />
-            </div>
-          </div>
-          {menuOpen ? (
-            <div
-              className="absolute left-0 top-16 z-10 h-screen w-72 border-4 bg-slate-50 md:hidden"
-              onClick={() => setMenuOpen((bol) => !bol)}
-            >
-              <p>menu-div</p>
-            </div>
-          ) : null}
-        </nav>
+        <Navbar />
+
         <div className="grid h-screen w-full items-center justify-center bg-slate-50 ">
           {allProducts && <ProductCollection products={allProducts} />}
         </div>
