@@ -1,35 +1,144 @@
 import { api } from "~/utils/api";
-import { useState } from "react";
-import { type Product } from "@prisma/client";
+import { useEffect, useState } from "react";
+import {
+  Category,
+  Color,
+  Tags,
+  type Product,
+  Brand,
+  ProductImage,
+} from "@prisma/client";
+import MultiChoice from "./MultiChoice";
+import ImageUpload from "./ImageUpload";
+import Image from "next/image";
 
-const AddProduct = () => {
+type AddProductType = {
+  id?: string;
+};
+
+const AddProduct = ({ id }: AddProductType) => {
   const createProduct = api.admin.createProduct.useMutation();
-  const allColors = api.admin.getAllColors.useQuery().data;
-  const allCategories = api.admin.getAllCategories.useQuery().data;
+  const updateProduct = api.admin.updateProduct.useMutation();
+  const allColors: Color[] | undefined = api.admin.getAllColors.useQuery().data;
+  const allCategories: Category[] | undefined =
+    api.admin.getAllCategories.useQuery().data;
+  const allBrands: Brand[] | undefined = api.admin.getAllBrands.useQuery().data;
+  const allTags: Tags[] | undefined = api.admin.getAllTags.useQuery().data;
 
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [selectedCats, setSelectedCats] = useState<string[]>([]);
+  const [selectedBrand, setSelectedBrand] = useState<string>("");
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [update, setUpdate] = useState(false);
 
-  const [prodData, setProdData] = useState<
-    Pick<Product, "name" | "price" | "text" | "discount">
-  >({ name: "", price: 0, discount: 0, text: "" });
+  const [name, setName] = useState("");
+  const [price, setPrice] = useState("0");
+  const [discount, setDiscount] = useState("0");
+  const [text, setText] = useState("");
+  const [tagline, setTagline] = useState("");
+  const [images, setImages] = useState<ProductImage[]>([]);
+
+  useEffect(() => {
+    if (!allBrands || !allBrands[0]) return;
+
+    setSelectedBrand(allBrands[0].id);
+  }, [allBrands]);
+
+  let dbProduct:
+    | (Product & { color: Color[] } & { category: Category[] } & {
+        tags: Tags[];
+      } & { images: ProductImage[] })
+    | null
+    | undefined;
+
+  if (id) {
+    dbProduct = api.admin.getProductById.useQuery({ id }).data;
+  }
+
+  useEffect(() => {
+    if (!dbProduct) return;
+
+    setUpdate(true);
+    setName(dbProduct.name);
+    setPrice(`${dbProduct.price}`);
+    setDiscount(`${dbProduct.discount}`);
+    setText(dbProduct.text);
+    const cols = dbProduct.color.map((col) => col.id);
+    setSelectedColors(cols);
+    const cats = dbProduct.category.map((cat) => cat.id);
+    setSelectedCats(cats);
+    const tags = dbProduct.tags.map((tag) => tag.id);
+    setSelectedTags(tags);
+    setImages(dbProduct.images);
+  }, [dbProduct]);
 
   const prodSubmit = async () => {
-    console.log("selectedCats:", selectedCats);
-
-    await createProduct.mutateAsync({
-      ...prodData,
+    const data = {
+      name: name,
+      price: +price,
+      discount: +discount,
+      text: text,
       color: [...selectedColors],
       category: [...selectedCats],
+      tags: [...selectedTags],
+      brand: selectedBrand,
+    };
+
+    if (update && id) {
+      await updateProduct.mutateAsync({ data, id });
+      return;
+    }
+
+    await createProduct.mutateAsync(data);
+  };
+
+  const handleImageUpload = (newImg: ProductImage) => {
+    console.log(newImg);
+    setImages((oldData) => {
+      return [...oldData, newImg];
     });
   };
 
   return (
-    <div className="flex h-full w-full flex-col gap-4 border-b bg-slate-300 px-2 py-4">
-      <div className="text-2xl">Add a product</div>
+    <div className="flex max-h-full w-full flex-col gap-2 overflow-auto border-b bg-slate-300 p-2">
+      <h1 className="text-2xl">
+        {update ? "Update product" : "Add a product"}
+      </h1>
+      {update && id && (
+        <div className=" border-b py-2">
+          <h2 className="pb-2 text-xl">Images</h2>
+          <div className="flex h-28 w-full gap-2">
+            <ImageUpload
+              imgType="products"
+              parentId={id}
+              callback={handleImageUpload}
+            />
+            <div className="h-full w-full overflow-hidden rounded-xl border border-slate-500 bg-slate-100 shadow-inner">
+              <ul className="flex h-full w-full items-center gap-2 overflow-auto p-2">
+                {images.map((img, index) => {
+                  return (
+                    <li
+                      key={`ProductImage#${index}`}
+                      className="relative flex aspect-square h-full items-center justify-center shadow-lg"
+                    >
+                      <Image
+                        src={img.url}
+                        fill={true}
+                        alt="Product Image"
+                        className="object-cover"
+                      />
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          </div>
+        </div>
+      )}
+
       <form onSubmit={prodSubmit} className="w-full">
-        <div className="flex flex-wrap justify-center gap-12 border-b py-4">
-          <div className="flex flex-col gap-4">
+        <div className="flex flex-wrap justify-center gap-4 border-b py-2">
+          <div className="flex flex-col gap-2">
             <label htmlFor="name" className="w-14">
               Name:
             </label>
@@ -37,18 +146,14 @@ const AddProduct = () => {
               type="text"
               name="name"
               id="name"
-              className="rounded-lg border border-slate-300"
+              className="rounded-lg border border-slate-300 bg-slate-100 p-1 shadow-inner"
+              value={name}
               onChange={(e) => {
-                setProdData((oldData) => {
-                  return {
-                    ...oldData,
-                    name: e.target.value,
-                  };
-                });
+                setName(e.target.value);
               }}
             />
           </div>
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-2">
             <label htmlFor="price" className="w-14">
               Price:
             </label>
@@ -56,18 +161,14 @@ const AddProduct = () => {
               type="number"
               name="price"
               id="price"
-              className="rounded-lg border border-slate-300"
+              className="rounded-lg border border-slate-300 bg-slate-100 p-1 shadow-inner"
+              value={price}
               onChange={(e) => {
-                setProdData((oldData) => {
-                  return {
-                    ...oldData,
-                    price: +e.target.value,
-                  };
-                });
+                setPrice(e.target.value);
               }}
             />
           </div>
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-2">
             <label htmlFor="discount" className="w-14">
               Discount:
             </label>
@@ -75,18 +176,14 @@ const AddProduct = () => {
               type="number"
               name="discount"
               id="discount"
-              className="rounded-lg border border-slate-300"
+              className="rounded-lg border border-slate-300 bg-slate-100 p-1 shadow-inner"
+              value={discount}
               onChange={(e) => {
-                setProdData((oldData) => {
-                  return {
-                    ...oldData,
-                    discount: +e.target.value,
-                  };
-                });
+                setDiscount(e.target.value);
               }}
             />
           </div>
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-2">
             <label htmlFor="name" className="w-14">
               Text:
             </label>
@@ -94,87 +191,78 @@ const AddProduct = () => {
               type="text"
               name="text"
               id="text"
-              className="rounded-lg border border-slate-300"
+              className="rounded-lg border border-slate-300 bg-slate-100 p-1 shadow-inner"
+              value={text}
               onChange={(e) => {
-                setProdData((oldData) => {
-                  return {
-                    ...oldData,
-                    text: e.target.value,
-                  };
-                });
+                setText(e.target.value);
               }}
             />
           </div>
         </div>
+        {allColors && (
+          <MultiChoice
+            input={allColors}
+            name={"color"}
+            callback={setSelectedColors}
+            selected={dbProduct?.color}
+          />
+        )}
 
-        <div className="flex gap-4 border-b py-4">
-          <label className="w-24">Color:</label>
-          <div className="flex gap-6">
-            {allColors?.map((color, index) => {
-              return (
-                <div key={`color#${index}`} className="flex flex-col gap-1">
-                  <label htmlFor={`colorName#${index}`}>{color.name}</label>
-                  <input
-                    type="checkbox"
-                    name={`colorName#${index}`}
-                    id={`colorId#${index}`}
-                    className="rounded-lg border border-slate-300"
-                    onChange={(e) => {
-                      setSelectedColors((oldData) => {
-                        if (e.target.checked) {
-                          return [...oldData, color.id];
-                        }
-
-                        return oldData.filter((selectedCol) => {
-                          return selectedCol !== color.id;
-                        });
-                      });
-                    }}
-                  />
-                </div>
-              );
-            })}
-          </div>
-        </div>
-        <div className="w-1/7 flex gap-4 py-4">
-          <label className="w-24">Category:</label>
-          <div className="flex gap-6">
-            {allCategories?.map((category, index) => {
-              return (
-                <div key={`category#${index}`} className="flex flex-col gap-1">
-                  <label htmlFor={`categoryName#${index}`}>
-                    {category.name}
-                  </label>
-                  <input
-                    type="checkbox"
-                    name={`categoryName#${index}`}
-                    id={`categoryId#${index}`}
-                    className="rounded-lg border border-slate-300"
-                    onChange={(e) => {
-                      setSelectedCats((oldData) => {
-                        if (e.target.checked) {
-                          return [...oldData, category.id];
-                        }
-
-                        return oldData.filter((selectedCat) => {
-                          return selectedCat !== category.id;
-                        });
-                      });
-                    }}
-                  />
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        <div className="w-1/7 flex gap-4">
-          <button
-            type="submit"
-            className="rounded-lg border border-slate-300 bg-slate-100 px-2 py-1 hover:bg-slate-200"
+        {allCategories && (
+          <MultiChoice
+            input={allCategories}
+            name={"category"}
+            callback={setSelectedCats}
+            selected={dbProduct?.category}
+          />
+        )}
+        <div className="flex gap-4 border-b py-2">
+          <label htmlFor="brand" className="w-14">
+            Brand:
+          </label>
+          <select
+            className="rounded-lg border border-slate-300 bg-slate-100 p-1 shadow-inner"
+            value={dbProduct?.brandId || selectedBrand}
+            onChange={(e) => {
+              setSelectedBrand(e.target.value);
+            }}
           >
-            Submit
-          </button>
+            {allBrands &&
+              allBrands.map((brand, index) => {
+                return (
+                  <option key={`brandSelect#${index}`} value={brand.id}>
+                    {brand.name}
+                  </option>
+                );
+              })}
+          </select>
+        </div>
+
+        {allTags && (
+          <MultiChoice
+            input={allTags}
+            name={"tags"}
+            callback={setSelectedTags}
+            selected={dbProduct?.tags}
+          />
+        )}
+
+        <div className="w-1/7 flex py-2">
+          {update ? (
+            <button
+              type="submit"
+              className="rounded-lg border border-slate-300 bg-slate-100 px-2 py-1 hover:bg-slate-200"
+            >
+              Update product
+            </button>
+          ) : (
+            <button
+              type="submit"
+              className="rounded-lg border border-slate-300 bg-slate-100 px-2 py-1 hover:bg-slate-200"
+            >
+              Create product
+            </button>
+          )}
         </div>
       </form>
     </div>

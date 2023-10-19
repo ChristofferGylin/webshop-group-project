@@ -12,16 +12,19 @@ import { type GetServerSideProps } from "next";
 import SignInOutButton from "~/component/SignInOutButton";
 
 const Admin = () => {
-
   const [productModal, setProductModal] = useState(false);
+  const [updateModal, setUpdateModal] = useState(false);
   const [colorModal, setColorModal] = useState(false);
   const [categoryModal, setCategoryModal] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [tagModal, setTagModal] = useState(false);
   const [brandModal, setBrandModal] = useState(false);
 
+  const [productId, setProductId] = useState("");
+
   const toggleModal = () => {
     setProductModal(false);
+    setUpdateModal(false);
     setColorModal(false);
     setCategoryModal(false);
     setTagModal(false);
@@ -40,6 +43,7 @@ const Admin = () => {
               }}
             />
             {productModal && <AddProduct />}
+            {updateModal && <AddProduct id={productId} />}
             {colorModal && <AddColor />}
             {categoryModal && <AddCategory />}
             {tagModal && <AddTags />}
@@ -97,7 +101,13 @@ const Admin = () => {
         </button>
       </div>
       <div className="m-3 overflow-hidden rounded-lg border bg-slate-200 text-slate-700">
-        <ProductList />
+        <ProductList
+          openEdit={(id: string) => {
+            toggleModal();
+            setProductId(id);
+            setUpdateModal(true);
+          }}
+        />
       </div>
     </>
   );
@@ -109,16 +119,16 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   if (!session) {
     return {
       redirect: {
-        destination: '/',
+        destination: "/",
         permanent: false,
       },
     };
   }
 
-  if (session.user.role !== 'admin') {
+  if (session.user.role !== "admin") {
     return {
       redirect: {
-        destination: '/',
+        destination: "/",
         permanent: false,
       },
     };
@@ -128,7 +138,5 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     props: { session },
   };
 };
-
-
 
 export default Admin;

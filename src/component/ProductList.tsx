@@ -1,7 +1,7 @@
 import { api } from "~/utils/api";
 import { AiFillEdit, AiFillDelete } from "react-icons/ai";
 
-const ProductList = () => {
+const ProductList = ({ openEdit }: { openEdit: (id: string) => void }) => {
   const allProducts = api.admin.getAllProducts.useQuery().data;
 
   return (
@@ -37,8 +37,16 @@ const ProductList = () => {
               </div>
               <div className="w-1/5">{product.price}</div>
               <div className="flex w-1/5 justify-end gap-2">
-                <AiFillEdit className="cursor-pointer fill-slate-700 text-xl hover:fill-slate-500" />
-                <AiFillDelete className="cursor-pointer fill-slate-700 text-xl hover:fill-red-700" />
+                <button
+                  onClick={() => {
+                    openEdit(product.id);
+                  }}
+                >
+                  <AiFillEdit className="fill-slate-700 text-xl hover:fill-slate-500" />
+                </button>
+                <button>
+                  <AiFillDelete className="fill-slate-700 text-xl hover:fill-red-700" />
+                </button>
               </div>
             </div>
           );
