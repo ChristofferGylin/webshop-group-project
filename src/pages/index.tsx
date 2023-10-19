@@ -22,7 +22,7 @@ import Hamburger from "~/component/navbar/Hamburger";
 export default function Home() {
   const { data: session } = useSession();
 
-  const allProducts = api.admin.getAllProducts.useQuery().data;
+  const allProducts = api.product.getAllProducts.useQuery().data;
 
   let homeButton;
   if (!session || !session.user) {
