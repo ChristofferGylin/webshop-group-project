@@ -251,7 +251,7 @@ const AddProduct = ({ id }: AddProductType) => {
           {update ? (
             <button
               type="submit"
-              className="rounded-lg border border-slate-300 bg-slate-100 px-2 py-1 hover:bg-slate-200"
+              className="rounded-lg border border-slate-300 bg-slate-100 px-2  py-1 hover:bg-slate-200"
             >
               Update product
             </button>

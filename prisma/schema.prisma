@@ -48,8 +48,8 @@ model Product {
   stock     Int            @default(50)
   ordered   Int            @default(0)
   tagline   String?
-  Brand     Brand?         @relation(fields: [brandId], references: [id])
-  brandId   String?
+  Brand     Brand         @relation(fields: [brandId], references: [id])
+  brandId   String
 
   @@index([name])
 }
@@ -62,7 +62,7 @@ model ProductImage {
   Product   Product? @relation(fields: [productId], references: [id])
   productId String?
   brand     Brand?
-  sortOrder Int?
+  sortOrder Int
 
   @@index([url])
 }
