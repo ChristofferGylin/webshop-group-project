@@ -1,8 +1,10 @@
 import { useRouter } from "next/router";
 import { api } from "~/utils/api";
-import { useEffect } from "react";
 
 const ProductPage = () => {
+
+  const allProducts = api.product.getAllProducts.useQuery().data;
+console.log(allProducts, "products")
   const router = useRouter();
   const product = api.product.getUnique.useQuery({ id: router.query.id }).data;
   console.log("product: ", product);
