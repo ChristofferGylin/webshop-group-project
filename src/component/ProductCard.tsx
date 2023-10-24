@@ -9,8 +9,8 @@ type ProductInput = {
   productName: string;
   brandName: string;
   price: number;
-  image?: string;
-  tag?: string;
+  image: string;
+  tagline?: string;
   discount?: number;
   dbId: string;
 };
@@ -20,7 +20,7 @@ const ProductCard = ({
   brandName,
   price,
   image,
-  tag,
+  tagline,
   discount = 0,
   dbId,
 }: ProductInput) => {
@@ -46,20 +46,16 @@ const ProductCard = ({
     <div className=" flex w-full flex-col gap-3 tracking-wide">
       <Link href={`/products/${dbId}`}>
         <div className="relative flex w-full justify-center bg-gray-500">
-          {image ? (
-            <Image
-              width={320}
-              height={400}
-              src={image}
-              alt={`${productName} Product Image`}
-              className="w-full"
-            />
-          ) : (
-            <div>No image</div>
-          )}
-          {tag && (
+          <Image
+            width={320}
+            height={400}
+            src={image}
+            alt={`${productName} Product Image`}
+            className="w-full"
+          />
+          {tagline && (
             <div className="absolute bottom-2 right-2 bg-slate-950 px-4 py-2 text-slate-100">
-              {tag}
+              {tagline}
             </div>
           )}
           {showDiscount && (
