@@ -5,7 +5,12 @@ import {
   type DefaultSession,
   type NextAuthOptions,
   type DefaultUser,
+  Profile,
+  User,
+  Account,
 } from "next-auth";
+import { Adapter, AdapterUser } from "next-auth/adapters";
+import { JWT, JWT } from "next-auth/jwt";
 //import DiscordProvider from "next-auth/providers/discord";
 import GoogleProvider from "next-auth/providers/google";
 
@@ -48,7 +53,34 @@ export const authOptions: NextAuthOptions = {
       },
 
     }),
+
+    jwt: async ({
+      token,
+      user,
+      account,
+      profile,
+      trigger,
+      isNewUser,
+      session
+    }: {
+      token: JWT;
+      user: AdapterUser | User;
+      account: Account | null;
+      profile?: Profile;
+      trigger: "signIn" | "update" | "signUp";
+      isNewUser?: boolean;
+      session?: any;
+    }): Promise<JWT> => {
+      if (user) {
+        token.id = user.id;
+        token.role = user.role;
+      }
+    
+      return token;
+    }
+    
   },
+ 
   adapter: PrismaAdapter(db),
   providers: [
     // DiscordProvider({
