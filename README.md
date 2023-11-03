@@ -1,6 +1,6 @@
 # Create T3 App
 
-npx db push
+npx prisma db push
 npx prisma studio
 
 1. git checkout development
