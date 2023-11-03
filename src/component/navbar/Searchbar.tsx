@@ -2,25 +2,19 @@ import { useState, useEffect } from "react";
 import { api } from "~/utils/api";
 import { AiOutlineSearch } from "react-icons/ai";
 import SearchResultList from "./SearchResultList";
+import { Product } from "@prisma/client";
 
 const Searchbar = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [searchList, setSearchList] = useState([]);
+  const [searchList, setSearchList] = useState<Product[]>([]);
   const [showSearch, setShowSearch] = useState(false);
   const data = api.product.search.useQuery({ searchTerm }).data;
-  // data som hämtas vid ändring i input/onChange
 
-  // filtrering när vi hämtar som körs i handleSearch för varje bokstav vi skriver in
-  function filterData(list: object[]) {
-    return list.filter((item) => {
-      // returnar ifall vi har sökord och item.name innehåller searchTerm ifrån input
-      return searchTerm != "" && item.name.toLowerCase().includes(searchTerm);
-    });
-  }
   const handleSearch = (word: string) => {
     setSearchTerm(word);
-    const filteredData = filterData(data);
-    setSearchList(filteredData);
+    if (typeof data !== "undefined") {
+      setSearchList(data);
+    }
   };
 
   return (

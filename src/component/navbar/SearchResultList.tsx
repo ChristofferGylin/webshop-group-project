@@ -1,6 +1,15 @@
 import Link from "next/link";
+import { Product } from "@prisma/client";
 
-const SearchResultList = ({ searchList, searchTerm }) => {
+interface SearchResultListProps {
+  searchList: Product[];
+  searchTerm: String;
+}
+
+const SearchResultList = ({
+  searchList,
+  searchTerm,
+}: SearchResultListProps) => {
   // om längden på ordet == 0 dvs "", skicka inte tillbaks ett resultat
   // detta kan ändras beroende på hur mkt vi vill skicka tillbaks
   if (searchTerm.length === 0) {
@@ -11,7 +20,7 @@ const SearchResultList = ({ searchList, searchTerm }) => {
     <div className="absolute max-h-48 w-36 overflow-x-hidden overflow-y-hidden">
       {searchList.map((item: any, index: any) => {
         return (
-          <Link href={`/products/${item.dbId}`} key={index}>
+          <Link href={`/products/${item.id}`} key={index}>
             <div
               className="w-full rounded-md p-1 hover:bg-gray-200"
               key={index}
