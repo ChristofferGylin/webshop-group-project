@@ -18,7 +18,7 @@ const SearchResultList = ({
   // nedan returneras en div med en lista, har gömt overflow
   return (
     <div className="absolute max-h-48 w-36 overflow-x-hidden overflow-y-hidden">
-      {searchList.map((item: any, index: any) => {
+      {searchList.map((item, index) => {
         return (
           <Link href={`/products/${item.id}`} key={index}>
             <div
