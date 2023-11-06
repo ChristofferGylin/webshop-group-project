@@ -14,9 +14,6 @@ npx prisma studio
 9. git push
 10. gå in på github.com och skapa pullrequest
 
-
-
-
 This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
 
 ## What's next? How do I make an app with this?

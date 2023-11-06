@@ -40,6 +40,7 @@ const ProductCollection = ({
         if (product.tagline) {
           tagline = product.tagline;
         }
+      
         return (
           <ProductCard
             key={`productCard#${index}`}
