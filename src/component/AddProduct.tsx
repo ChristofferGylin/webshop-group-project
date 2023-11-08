@@ -205,7 +205,17 @@ const AddProduct = ({ id }: AddProductType) => {
           <MultiChoice
             input={allColors}
             name={"color"}
-            callback={setSelectedColors}
+            callback={(checked, itemId) => {
+              setSelectedColors((oldData) => {
+                if (checked) {
+                  return [...oldData, itemId];
+                }
+
+                return oldData.filter((selectedItem: string) => {
+                  return selectedItem !== itemId;
+                });
+              });
+            }}
             selected={dbProduct?.color}
           />
         )}
@@ -214,7 +224,17 @@ const AddProduct = ({ id }: AddProductType) => {
           <MultiChoice
             input={allCategories}
             name={"category"}
-            callback={setSelectedCats}
+            callback={(checked, itemId) => {
+              setSelectedCats((oldData) => {
+                if (checked) {
+                  return [...oldData, itemId];
+                }
+
+                return oldData.filter((selectedItem: string) => {
+                  return selectedItem !== itemId;
+                });
+              });
+            }}
             selected={dbProduct?.category}
           />
         )}
@@ -229,14 +249,13 @@ const AddProduct = ({ id }: AddProductType) => {
               setSelectedBrand(e.target.value);
             }}
           >
-            {allBrands &&
-              allBrands.map((brand, index) => {
-                return (
-                  <option key={`brandSelect#${index}`} value={brand.id}>
-                    {brand.name}
-                  </option>
-                );
-              })}
+            {allBrands?.map((brand, index) => {
+              return (
+                <option key={`brandSelect#${index}`} value={brand.id}>
+                  {brand.name}
+                </option>
+              );
+            })}
           </select>
         </div>
 
@@ -244,7 +263,17 @@ const AddProduct = ({ id }: AddProductType) => {
           <MultiChoice
             input={allTags}
             name={"tags"}
-            callback={setSelectedTags}
+            callback={(checked, itemId) => {
+              setSelectedTags((oldData) => {
+                if (checked) {
+                  return [...oldData, itemId];
+                }
+
+                return oldData.filter((selectedItem: string) => {
+                  return selectedItem !== itemId;
+                });
+              });
+            }}
             selected={dbProduct?.tags}
           />
         )}

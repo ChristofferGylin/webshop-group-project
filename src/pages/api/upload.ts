@@ -22,7 +22,7 @@ const saveFile = async (file: File, path: string) => {
   // write image file to file system, using the path variable to build a sting for the filepath, including filename (where the file will be saved)
   fs.writeFileSync(`./public${path}`, data);
   //delete image from memory
-  await fs.unlinkSync(file.filepath);
+  fs.unlinkSync(file.filepath);
   return;
 };
 
@@ -54,8 +54,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
       form.parse(req, async (err, fields, files) => {
         if (err) {
-          console.log("Error:", err);
-          res.status(500).send(err.message);
+          if (err.message) {
+            res.status(500).send(err.message);
+          } else {
+            res.status(500).end();
+          }
+
           return;
         }
 
@@ -63,7 +67,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
         // deny request if image is too large
 
-        if (files.file && files.file[0]) {
+        if (files?.file?.[0]) {
           if (files.file[0].size > 20971520) {
             res.status(413).end();
             return;
@@ -91,18 +95,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
           // create id for database, and use the same for filename
           const dbId = uuidv4();
-          const path = `/images/${fields.imgType}/${dbId}${fileExtension}`;
+          const imgType = fields.imgType?.[0];
+          if (!imgType) return;
+          const path = `/images/${imgType}/${dbId}${fileExtension}`;
           let newImg;
 
           // write info to db
 
-          if (
-            fields &&
-            fields.parentId &&
-            fields.parentId[0] &&
-            fields.imgType &&
-            fields.imgType[0]
-          ) {
+          if (fields?.parentId?.[0] && fields?.imgType?.[0]) {
             let dbData;
 
             // if image type from input fileds is "product" (different from file type on actual file!), make request for other images related to the same product,
