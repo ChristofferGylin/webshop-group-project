@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { useSelectedLayoutSegment } from "next/navigation";
 import { AiOutlineHeart } from "react-icons/ai";
 import { useState } from "react";
 import Link from "next/link";

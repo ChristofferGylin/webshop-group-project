@@ -1,12 +1,12 @@
 import { api } from "~/utils/api";
 import { useEffect, useState } from "react";
 import {
-  Category,
-  Color,
-  Tags,
+  type Category,
+  type Color,
+  type Tags,
   type Product,
-  Brand,
-  ProductImage,
+  type Brand,
+  type ProductImage,
 } from "@prisma/client";
 import MultiChoice from "./MultiChoice";
 import ImageUpload from "./ImageUpload";
@@ -35,13 +35,14 @@ const AddProduct = ({ id }: AddProductType) => {
   const [price, setPrice] = useState("0");
   const [discount, setDiscount] = useState("0");
   const [text, setText] = useState("");
-  const [tagline, setTagline] = useState("");
   const [images, setImages] = useState<ProductImage[]>([]);
 
   useEffect(() => {
-    if (!allBrands || !allBrands[0]) return;
+    if (!allBrands) return;
 
-    setSelectedBrand(allBrands[0].id);
+    const brands = allBrands[0];
+    if (!brands) return;
+    setSelectedBrand(brands.id);
   }, [allBrands]);
 
   let dbProduct:
@@ -124,6 +125,7 @@ const AddProduct = ({ id }: AddProductType) => {
                       <Image
                         src={img.url}
                         fill={true}
+                        sizes="33vw"
                         alt="Product Image"
                         className="object-cover"
                       />
@@ -222,7 +224,7 @@ const AddProduct = ({ id }: AddProductType) => {
           </label>
           <select
             className="rounded-lg border border-slate-300 bg-slate-100 p-1 shadow-inner"
-            value={dbProduct?.brandId || selectedBrand}
+            value={dbProduct?.brandId ?? selectedBrand}
             onChange={(e) => {
               setSelectedBrand(e.target.value);
             }}

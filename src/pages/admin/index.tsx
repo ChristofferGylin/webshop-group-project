@@ -6,7 +6,6 @@ import AddBrand from "~/component/AddBrand"; // Ny import
 import { useState } from "react";
 import { AiFillCloseCircle } from "react-icons/ai";
 import AddTags from "~/component/AddTags";
-import SignInButton from "~/component/SignInButton";
 import { getServerAuthSession } from "~/server/auth";
 import { type GetServerSideProps } from "next";
 import SignInOutButton from "~/component/SignInOutButton";

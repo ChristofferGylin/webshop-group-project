@@ -1,5 +1,5 @@
-import { ProductImage } from "@prisma/client";
-import { useState, useEffect, useRef, ChangeEvent } from "react";
+import { type ProductImage } from "@prisma/client";
+import { type ChangeEvent, useState, useEffect, useRef } from "react";
 import { AiOutlineCloudUpload } from "react-icons/ai";
 
 type ImageProps = {
@@ -10,7 +10,6 @@ type ImageProps = {
 
 const ImageUpload = ({ imgType, parentId, callback }: ImageProps) => {
   const [image, setImage] = useState<File | null>(null);
-  const [createObjectURL, setCreateObjectURL] = useState<string | null>(null);
   const [userMessage, setUserMessage] = useState("");
   const fileInput = useRef<HTMLInputElement | null>(null);
 
@@ -40,7 +39,6 @@ const ImageUpload = ({ imgType, parentId, callback }: ImageProps) => {
       }
 
       setImage(uploadedImage);
-      setCreateObjectURL(URL.createObjectURL(uploadedImage));
     }
   };
 

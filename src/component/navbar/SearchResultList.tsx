@@ -1,9 +1,9 @@
 import Link from "next/link";
-import { Product } from "@prisma/client";
+import { type Product } from "@prisma/client";
 
 interface SearchResultListProps {
   searchList: Product[];
-  searchTerm: String;
+  searchTerm: string;
 }
 
 const SearchResultList = ({
