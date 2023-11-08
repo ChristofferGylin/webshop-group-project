@@ -1,37 +1,26 @@
-import { Product } from "@prisma/client";
-import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useState, useEffect } from "react";
-import { nullable } from "zod";
-import ProductCard from "~/component/ProductCard";
 import { api } from "~/utils/api";
+
+const Loading = () => {
+  return (
+    <div className="flex h-full w-full items-center justify-center text-3xl">
+      Loading
+    </div>
+  );
+};
 
 const ProductPage = () => {
   const router = useRouter();
   const id = router.query.id;
-  // const [product, setProduct] = useState<Product | null>(null);
 
-  if (!id) {
-    router.push("/");
-    return null;
+  if (!id || typeof id !== "string") {
+    return <Loading />;
   }
+  const product = api.product.getUnique.useQuery({ id }).data;
 
-  const response = api.product.getUnique.useQuery({
-    id,
-    onSuccess: handleSuccess,
-  });
-
-  function handleSuccess(data) {
-    if (data.error || !data.data) {
-      router.push("/");
-      return null;
-    }
-  }
-
-  const product = response.data;
   if (!product) {
-    return <div>Loading</div>;
+    return <Loading />;
   }
 
   return (
