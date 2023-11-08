@@ -1,8 +1,13 @@
-import { Brand, Category, Color, Tags } from "@prisma/client";
+import {
+  type Brand,
+  type Category,
+  type Color,
+  type Tags,
+} from "@prisma/client";
 
 type MultiProps = {
   name: string;
-  callback: (oldData: any) => void;
+  callback: (checked: boolean, itemId: string) => void;
   input: Color[] | Category[] | Tags[] | Brand[];
   selected?: Color[] | Category[] | Tags[];
 };
@@ -29,15 +34,7 @@ const MultiChoice = ({ name, callback, input, selected }: MultiProps) => {
                 id={`colorId#${index}`}
                 className="rounded-lg border border-slate-300"
                 onChange={(e) => {
-                  callback((oldData: string[]) => {
-                    if (e.target.checked) {
-                      return [...oldData, item.id];
-                    }
-
-                    return oldData.filter((selectedItem: string) => {
-                      return selectedItem !== item.id;
-                    });
-                  });
+                  callback(e.target.checked, item.id);
                 }}
               />
             </div>

@@ -14,8 +14,8 @@ const ImageUpload = ({ imgType, parentId, callback }: ImageProps) => {
   const fileInput = useRef<HTMLInputElement | null>(null);
 
   const uploadToClient = (event: ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files[0]) {
-      const uploadedImage = event.target.files[0];
+    if (event.target.files?.[0]) {
+      const uploadedImage = event.target.files?.[0];
 
       if (uploadedImage.size > 20971520) {
         setUserMessage("File too large, maximum file size is 20MB.");
@@ -42,33 +42,33 @@ const ImageUpload = ({ imgType, parentId, callback }: ImageProps) => {
     }
   };
 
-  const uploadToServer = async () => {
-    const body = new FormData();
-    if (image) {
-      body.append("file", image);
-      body.append("imgType", imgType);
-      body.append("parentId", parentId);
-      const response = await fetch("/api/upload", {
-        method: "POST",
-        body,
-      });
-      if (response.ok) {
-        const data = await response.json();
-        callback(data);
-      } else {
-        // do other stuff
-      }
-    }
-  };
-
   const handleClick = () => {
-    if (fileInput && fileInput.current) {
+    if (fileInput.current) {
       fileInput.current.click();
     }
   };
 
   useEffect(() => {
     if (!image) return;
+
+    const uploadToServer = async () => {
+      const body = new FormData();
+      if (image) {
+        body.append("file", image);
+        body.append("imgType", imgType);
+        body.append("parentId", parentId);
+        const response = await fetch("/api/upload", {
+          method: "POST",
+          body,
+        });
+        if (response.ok) {
+          const data = (await response.json()) as ProductImage;
+          callback(data);
+        } else {
+          // do other stuff
+        }
+      }
+    };
 
     uploadToServer();
   }, [image]);
