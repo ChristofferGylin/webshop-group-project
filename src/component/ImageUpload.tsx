@@ -48,30 +48,31 @@ const ImageUpload = ({ imgType, parentId, callback }: ImageProps) => {
     }
   };
 
+  const uploadToServer = async () => {
+    const body = new FormData();
+    if (image) {
+      body.append("file", image);
+      body.append("imgType", imgType);
+      body.append("parentId", parentId);
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body,
+      });
+      if (response.ok) {
+        const data = (await response.json()) as ProductImage;
+        callback(data);
+        setImage(null);
+      } else {
+        // do other stuff
+      }
+    }
+  };
+
   useEffect(() => {
     if (!image) return;
 
-    const uploadToServer = async () => {
-      const body = new FormData();
-      if (image) {
-        body.append("file", image);
-        body.append("imgType", imgType);
-        body.append("parentId", parentId);
-        const response = await fetch("/api/upload", {
-          method: "POST",
-          body,
-        });
-        if (response.ok) {
-          const data = (await response.json()) as ProductImage;
-          callback(data);
-        } else {
-          // do other stuff
-        }
-      }
-    };
-
-    uploadToServer();
-  }, [image]);
+    void uploadToServer();
+  }, [image, uploadToServer]);
 
   return (
     <div className="aspect-square h-full">

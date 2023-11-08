@@ -14,7 +14,7 @@ export const config = {
 
 // Function that saves the image to the filesystem (in /public) using nodes built in fs module
 
-const saveFile = async (file: File, path: string) => {
+const saveFile = (file: File, path: string) => {
   // read the image data from memory using file.filepath and save in data variable
 
   const data = fs.readFileSync(file.filepath);
@@ -54,12 +54,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
       form.parse(req, async (err, fields, files) => {
         if (err) {
-          if (err.message) {
-            res.status(500).send(err.message);
-          } else {
-            res.status(500).end();
-          }
-
+          res.status(500).send(err);
           return;
         }
 
