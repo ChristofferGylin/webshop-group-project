@@ -1,13 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { api } from "~/utils/api";
 import { AiOutlineSearch } from "react-icons/ai";
 import SearchResultList from "./SearchResultList";
-import { Product } from "@prisma/client";
+import { type Product } from "@prisma/client";
 
 const Searchbar = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchList, setSearchList] = useState<Product[]>([]);
-  const [showSearch, setShowSearch] = useState(false);
   const data = api.product.search.useQuery({ searchTerm }).data;
 
   const handleSearch = (word: string) => {

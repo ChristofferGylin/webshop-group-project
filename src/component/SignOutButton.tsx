@@ -1,15 +1,14 @@
-import { signIn, signOut, useSession } from "next-auth/react"
-import { AiOutlineUser } from "react-icons/ai"
+import { signOut } from "next-auth/react";
 
 const SignOutButton = () => {
-
-    return (
-        <button
-            className='border bg-slate-100 hover:bg-slate-200 border-slate-300 rounded-lg px-2 py-1'
-            onClick={() => signOut()}>
-            Sign Out
-        </button>
-    )
-}
+  return (
+    <button
+      className="rounded-lg border border-slate-300 bg-slate-100 px-2 py-1 hover:bg-slate-200"
+      onClick={() => signOut()}
+    >
+      Sign Out
+    </button>
+  );
+};
 
 export default SignOutButton;

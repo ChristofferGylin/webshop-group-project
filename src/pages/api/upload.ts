@@ -1,4 +1,4 @@
-import formidable, { File } from "formidable";
+import formidable, { type File } from "formidable";
 import fs from "fs";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
@@ -164,7 +164,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
           // save file to file system and end request.
 
-          saveFile(files.file[0], path);
+          await saveFile(files.file[0], path);
           res.json(newImg);
         }
       });

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { api } from "~/utils/api";
-import { Brand } from "@prisma/client";
+import { type Brand } from "@prisma/client";
 
 const AddBrand: React.FC = () => {
   //  Mutation för att skapa ett varumärke.
@@ -15,7 +15,7 @@ const AddBrand: React.FC = () => {
     event.preventDefault();
     await createBrand.mutateAsync({
       name: brandData.name,
-      logoId: brandData.logoId || undefined,
+      logoId: brandData.logoId ?? undefined,
     });
   };
 

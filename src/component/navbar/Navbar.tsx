@@ -2,12 +2,7 @@ import { useSession } from "next-auth/react";
 import SignInButton from "~/component/SignInButton";
 import { useState } from "react";
 import Link from "next/link";
-import {
-  AiOutlineUser,
-  AiOutlineSearch,
-  AiOutlineHeart,
-  AiOutlineMenu,
-} from "react-icons/ai";
+import { AiOutlineUser, AiOutlineHeart } from "react-icons/ai";
 import { BiShoppingBag } from "react-icons/bi";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { FcHome } from "react-icons/fc";
