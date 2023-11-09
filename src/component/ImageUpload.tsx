@@ -54,7 +54,7 @@ const ImageUpload = ({ imgType, parentId, callback }: ImageProps) => {
     }
   };
 
-  const uploadToServer = useCallback(async () => {
+  const uploadToServer = async () => {
     const body = new FormData();
     if (image) {
       body.append("file", image);
@@ -72,7 +72,7 @@ const ImageUpload = ({ imgType, parentId, callback }: ImageProps) => {
         // do other stuff
       }
     }
-  }, [image, imgType, parentId, callback, setImage]);
+  };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
