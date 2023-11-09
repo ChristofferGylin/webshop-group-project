@@ -74,11 +74,12 @@ const ImageUpload = ({ imgType, parentId, callback }: ImageProps) => {
     }
   }, [image, imgType, parentId, callback, setImage]);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (!image) return;
 
     void uploadToServer();
-  }, [image, uploadToServer]);
+  }, [image]);
 
   return (
     <div className="aspect-square h-full">
