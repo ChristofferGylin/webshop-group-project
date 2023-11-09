@@ -5,6 +5,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "~/server/auth";
 import { v4 as uuidv4 } from "uuid";
 import { db } from "~/server/db";
+import path from "path";
 
 export const config = {
   api: {
@@ -14,13 +15,17 @@ export const config = {
 
 // Function that saves the image to the filesystem (in /public) using nodes built in fs module
 
-const saveFile = (file: File, path: string) => {
+const saveFile = (file: File, pathPart: string) => {
   // read the image data from memory using file.filepath and save in data variable
 
   const data = fs.readFileSync(file.filepath);
 
   // write image file to file system, using the path variable to build a sting for the filepath, including filename (where the file will be saved)
-  fs.writeFileSync(`./public${path}`, data);
+
+  const filePath = path.join(process.cwd(), "public", pathPart);
+  fs.writeFileSync(filePath, data);
+
+  //fs.writeFileSync(`./public${path}`, data);
   //delete image from memory
   fs.unlinkSync(file.filepath);
   return;
