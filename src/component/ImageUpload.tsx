@@ -1,5 +1,11 @@
 import { type ProductImage } from "@prisma/client";
-import { type ChangeEvent, useState, useEffect, useRef } from "react";
+import {
+  type ChangeEvent,
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+} from "react";
 import { AiOutlineCloudUpload } from "react-icons/ai";
 
 type ImageProps = {
@@ -48,7 +54,7 @@ const ImageUpload = ({ imgType, parentId, callback }: ImageProps) => {
     }
   };
 
-  const uploadToServer = async () => {
+  const uploadToServer = useCallback(async () => {
     const body = new FormData();
     if (image) {
       body.append("file", image);
@@ -66,7 +72,7 @@ const ImageUpload = ({ imgType, parentId, callback }: ImageProps) => {
         // do other stuff
       }
     }
-  };
+  }, [image, imgType, parentId, callback, setImage]);
 
   useEffect(() => {
     if (!image) return;
