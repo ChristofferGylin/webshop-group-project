@@ -159,7 +159,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
           // save file to file system and end request.
 
-          await saveFile(files.file[0], path);
+          saveFile(files.file[0], path);
           res.json(newImg);
         }
       });
